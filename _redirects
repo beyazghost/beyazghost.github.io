@@ -1,0 +1,2 @@
+# Serve the Google verification file at its exact .html path (Cloudflare Pages would otherwise 308 to a clean URL)
+/google2254b579a840696a.html  /google2254b579a840696a.txt  200
