@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#1c2550"/><stop offset="1" stop-color="#070a16"/></radialGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6dc"/><stop offset=".35" stop-color="#ffd27a"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>
+    <filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="c"><circle cx="80" cy="80" r="78"/></clipPath>
+  </defs>
+  <g clip-path="url(#c)">
+    <rect width="160" height="160" fill="url(#bg)"/>
+    <!-- hooded silhouette, drawn as a circuit trace -->
+    <path d="M80 30 C56 30 44 50 44 72 C44 88 50 98 58 104 L50 150 L110 150 L102 104 C110 98 116 88 116 72 C116 50 104 30 80 30 Z"
+          fill="#0b1026" stroke="#8fe6ff" stroke-opacity=".75" stroke-width="1.6"/>
+    <path d="M80 42 C64 42 56 56 56 72 C56 86 66 96 80 96 C94 96 104 86 104 72 C104 56 96 42 80 42 Z" fill="#05070f"/>
+    <!-- circuit traces -->
+    <g stroke="#8fe6ff" stroke-opacity=".55" stroke-width="1.2" fill="none">
+      <path d="M62 118 L62 132 L72 140"/><path d="M98 118 L98 128 L88 138"/><path d="M80 110 L80 150"/>
+    </g>
+    <g fill="#bff3ff"><circle cx="72" cy="140" r="2"/><circle cx="88" cy="138" r="2"/><circle cx="62" cy="118" r="2"/><circle cx="98" cy="118" r="2"/></g>
+    <!-- the spark in the hood -->
+    <circle cx="80" cy="70" r="22" fill="url(#core)" opacity=".8"/>
+    <path d="M80 56 L83 67 L94 70 L83 73 L80 84 L77 73 L66 70 L77 67 Z" fill="#fff6dc" filter="url(#g)"/>
+    <!-- kintsugi seam -->
+    <polyline points="80,30 84,40 78,48" fill="none" stroke="#ffd98a" stroke-width="1.6" filter="url(#g)"/>
+  </g>
+  <circle cx="80" cy="80" r="78" fill="none" stroke="#ffd98a" stroke-opacity=".6" stroke-width="2"/>
+</svg>

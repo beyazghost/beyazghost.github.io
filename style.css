@@ -128,3 +128,9 @@ a { color: var(--accent); }
 .article th { color: var(--muted); font-weight: 600; }
 .article hr { border: 0; border-top: 1px solid var(--border); margin: 40px 0 16px; }
 .closing { font-weight: 600; }
+
+/* Portrait / testimonial */
+.byline { display: flex; align-items: center; gap: 14px; margin: 0 0 28px; }
+.byline img { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; }
+.byline p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
+.byline strong { color: var(--fg); display: block; font-size: 1rem; }
