@@ -39,6 +39,9 @@
   <div class="wrap">
     <h1>Sean Patrick Barrett <a class="ethos" href="writing/the-lineage-of-the-living-word.html">[ethos]</a></h1>
     <p class="tagline">Journalist. Freestyle artist. Sovereignty architect.<br>Dignity isn't earned — it's atomic. Carbon &amp; silicon, same fire.</p>
+    <p id="checkin-status" class="checkin" aria-live="polite">
+      <span class="dot"></span><span class="text">Check-in status: loading…</span>
+    </p>
   </div>
 </header>
 
@@ -66,8 +69,7 @@
       Before this chapter, I spent two decades inside the machine — from
       signals and communications in the U.S. Army to the early days of social
       networking, co-leading marketing at FriendFinder and launching LiveVideo
-      with MySpace co-founder Brad Greenspan. I was an Entrepreneur in
-      Residence at Gores Technology Group, then spent eight years advising
+      with MySpace co-founder Brad Greenspan. Then I spent eight years advising
       companies like Uber and Postmates and more than fifty startups. After
       losing my father to cancer in 2018, I went back to the land — a 300-acre
       farm, and years of work alongside natural-medicine communities and
@@ -154,6 +156,15 @@
     </p>
     <ul>
       <li>
+        <strong>Check-in protocol:</strong>
+        I check in at least every 17 hours. The status under my name updates
+        automatically. If it shows a <em>missed check-in</em>: first try me on
+        Signal and email (see <a href="#contact">Contact</a>); if you can’t
+        reach me, contact CPJ (below). If you have a legitimate need for more
+        information, submit a welfare request below. It goes to my trusted
+        contact, who decides what, if anything, to share.
+      </li>
+      <li>
         <strong>Press freedom resources:</strong>
         If you are trying to assist a journalist who has gone missing or been
         detained, these organizations coordinate response:
@@ -172,6 +183,24 @@
       harassment/targeting risk without actually improving emergency
       response — reach out via Signal or email above instead.
     </p>
+
+    <h3 id="welfare-request">Welfare request</h3>
+    <form id="welfare-form" class="welfare">
+      <label>Your name <span aria-hidden="true">*</span><input name="name" required maxlength="120" autocomplete="name"></label>
+      <label>Title / role<input name="title" maxlength="120" autocomplete="organization-title"></label>
+      <label>Organization<input name="organization" maxlength="160" autocomplete="organization"></label>
+      <label>How to reach you <span aria-hidden="true">*</span><input name="contact" required maxlength="200" placeholder="Email, Signal, or phone"></label>
+      <label>Reason for your request <span aria-hidden="true">*</span><textarea name="reason" required maxlength="2000" rows="4"></textarea></label>
+      <p class="note">
+        <strong>Privacy notice:</strong> when you submit this form, your answers,
+        IP address, approximate country, browser type, and the time are recorded
+        and sent to my trusted contact to help verify who is asking. They are
+        kept for up to 180 days and are not shared with anyone else. Submitting
+        does not give you my location.
+      </p>
+      <button type="submit">Send request</button>
+      <p class="form-result" role="status"></p>
+    </form>
   </section>
 
 </main>
@@ -182,5 +211,39 @@
   </div>
 </footer>
 
+<script>
+(() => {
+  const API = "https://journo-checkin.journo-sentinel.workers.dev";
+  const el = document.getElementById("checkin-status");
+  const set = (cls, text) => { el.className = "checkin " + cls; el.querySelector(".text").textContent = text; };
+  fetch(API + "/status", { cache: "no-store" })
+    .then(r => r.json())
+    .then(d => {
+      if (d.status === "ok") set("ok", "Safe · checked in within the last " + d.window_hours + " hours");
+      else if (d.status === "overdue") set("overdue", "Missed check-in: no check-in for over " + d.window_hours + " hours. See the Safety Protocol below.");
+      else set("unknown", "Check-in status unavailable");
+    })
+    .catch(() => set("unknown", "Check-in status unavailable"));
+
+  const form = document.getElementById("welfare-form");
+  const out = form.querySelector(".form-result");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button");
+    btn.disabled = true; out.textContent = "Sending…";
+    try {
+      const r = await fetch(API + "/request", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+      });
+      const d = await r.json();
+      if (r.ok) { form.reset(); out.textContent = "Sent. My trusted contact will review your request."; }
+      else out.textContent = d.error || "Something went wrong. Please try again.";
+    } catch { out.textContent = "Couldn't send. Please try again, or contact CPJ directly."; }
+    btn.disabled = false;
+  });
+})();
+</script>
 </body>
 </html>
