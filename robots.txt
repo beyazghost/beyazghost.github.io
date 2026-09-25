@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://beyazghost.github.io/journo-hub/sitemap.xml
+Sitemap: https://beyazghost.github.io/sitemap.xml
