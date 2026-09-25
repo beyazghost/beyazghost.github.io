@@ -118,6 +118,14 @@ p { margin: 0 0 1em; }
 
 .site-header { padding: clamp(3rem, 8vw, 6rem) 0 1.5rem; }
 .site-header h1 { max-width: 18ch; }
+.site-header .alias {
+  margin: 0.4rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
 .site-header .tagline {
   margin: 1rem 0 0;
   font-size: 1.15em;
