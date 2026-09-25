@@ -524,3 +524,37 @@ code { font-size: 0.85em; }
 .cashapp p { margin: 0 0 0.4rem; }
 .cashapp ol { margin: 0; padding-left: 1.3rem; }
 .cashapp li { margin-bottom: 0.3rem; }
+
+/* Current status update banner (newest entry first) */
+.status-banner { margin: 1.5rem 0 0.5rem; }
+.status-box {
+  border: 1px solid var(--hair);
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.25rem 0.25rem;
+}
+.status-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.status-title .pulse {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--accent); flex: none;
+  animation: status-pulse 2s ease-in-out infinite;
+}
+@keyframes status-pulse { 50% { opacity: 0.25; } }
+@media (prefers-reduced-motion: reduce) { .status-title .pulse { animation: none; } }
+.news { list-style: none; margin: 0; padding: 0; }
+.news li { padding: 0 0 0.9rem; }
+.news li + li { border-top: 1px solid var(--hair); padding-top: 0.9rem; }
+.news time { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.2rem; }
+.news p { margin: 0; }
+@media (min-width: 54rem) {
+  .home .status-banner .wrap > * { margin-left: calc(var(--label) + var(--gap)); max-width: var(--measure); }
+}
