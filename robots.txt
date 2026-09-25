@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://beyazghost.github.io/sitemap.xml
+Sitemap: https://spbzorro.pages.dev/sitemap.xml
