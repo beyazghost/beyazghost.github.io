@@ -574,3 +574,11 @@ code { font-size: 0.85em; }
 .news-page .proofs { margin-top: 1.25rem; }
 .news-page .proofs { align-items: start; }
 .news-page .proofs img { height: auto; object-fit: contain; }
+
+/* TikTok video of the day (under the check-in line, same size) */
+.votd { display: flex; align-items: flex-start; gap: 0.55rem; margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--muted); }
+.votd .dot { width: 0.5rem; height: 0.5rem; margin-top: 0.5em; border-radius: 50%; background: var(--accent); flex: none; animation: status-pulse 2s ease-in-out infinite; }
+.votd strong { font-weight: 600; color: var(--accent); }
+.votd a { overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .votd .dot { animation: none; } }
+@media print { .votd { display: none; } }
