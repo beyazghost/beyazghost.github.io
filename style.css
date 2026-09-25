@@ -481,3 +481,40 @@ code { font-size: 0.85em; }
 .lightning img { width: 9rem; height: 9rem; flex: none; background: #fff; padding: 0.35rem; border: 1px solid var(--hair); }
 .lightning p { margin: 0; }
 @media (max-width: 30rem) { .lightning { flex-direction: column; } }
+
+/* =========================================================
+   Bold section headings (3×) and ZORRO to match
+   ========================================================= */
+.home section > h2 {
+  font-size: 2.34rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  line-height: 1.05;
+  margin: 0 0 1.5rem;
+}
+@media (min-width: 54rem) {
+  .home section > h2 { grid-column: 1 / -1; grid-row: auto; padding-top: 0; margin: 0 0 1.5rem; }
+}
+.site-header .alias {
+  margin: 0.5rem 0 0;
+  font-size: 2.34rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.05;
+}
+
+/* Translate menu */
+.translate {
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--hair);
+  border-radius: 2px;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+}
+.site-nav .translate { margin-left: auto; }
+.story .crumb { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.story .crumb .translate { font-family: var(--sans); font-size: 0.8rem; }
