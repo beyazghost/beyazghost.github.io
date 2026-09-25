@@ -475,3 +475,9 @@ code { font-size: 0.85em; }
 .support-list { list-style: none; padding: 0; margin: 0 0 1.25rem; }
 .support-list li { margin: 0 0 0.7rem; }
 .support-list span { display: block; font-size: 0.9rem; color: var(--muted); }
+
+/* Lightning option */
+.lightning { display: flex; gap: 1.25rem; align-items: flex-start; margin: 0.5rem 0 1.25rem; }
+.lightning img { width: 9rem; height: 9rem; flex: none; background: #fff; padding: 0.35rem; border: 1px solid var(--hair); }
+.lightning p { margin: 0; }
+@media (max-width: 30rem) { .lightning { flex-direction: column; } }
