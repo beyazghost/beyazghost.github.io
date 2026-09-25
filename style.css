@@ -518,3 +518,9 @@ code { font-size: 0.85em; }
 .site-nav .translate { margin-left: auto; }
 .story .crumb { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
 .story .crumb .translate { font-family: var(--sans); font-size: 0.8rem; }
+
+/* Cash App steps */
+.cashapp { margin: 0.5rem 0 1.25rem; }
+.cashapp p { margin: 0 0 0.4rem; }
+.cashapp ol { margin: 0; padding-left: 1.3rem; }
+.cashapp li { margin-bottom: 0.3rem; }
