@@ -147,3 +147,14 @@ a { color: var(--accent); }
 .paper-meta { font-size: 0.8rem; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
 .lens { font-size: 0.95rem; color: var(--muted); font-style: italic; }
 .lens span { font-style: normal; font-weight: 600; color: #d9a441; }
+
+/* [ethos] link beside the name */
+.site-header h1 .ethos {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  text-decoration: none;
+  color: #d9a441;
+}
+.site-header h1 .ethos:hover { text-decoration: underline; }
