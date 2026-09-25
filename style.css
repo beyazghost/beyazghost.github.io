@@ -455,3 +455,18 @@ code { font-size: 0.85em; }
 @media (min-width: 40rem) {
   .story .article figure.pair { grid-template-columns: 1fr 1fr; }
 }
+
+/* Home portrait: opening frame under the nav */
+.portrait { margin: 2.5rem 0 0; }
+.portrait img { display: block; width: 100%; height: auto; }
+.portrait figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.portrait figcaption span { color: var(--accent); margin-right: 0.6rem; }
+@media (min-width: 54rem) {
+  .home .portrait figcaption { margin-left: calc(var(--label) + var(--gap)); }
+}
