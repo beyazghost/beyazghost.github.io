@@ -134,3 +134,16 @@ a { color: var(--accent); }
 .byline img { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; }
 .byline p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.4; }
 .byline strong { color: var(--fg); display: block; font-size: 1rem; }
+
+/* Reading list */
+.paths { border-left: 3px solid #d9a441; padding: 4px 0 4px 16px; margin: 24px 0 8px; }
+.paths p { margin: 4px 0; font-size: 0.95rem; }
+.papers { list-style: none; padding: 0; margin: 0; }
+.papers li { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.papers li:last-child { border-bottom: none; }
+.papers h3 { margin: 2px 0 8px; font-size: 1.05rem; line-height: 1.35; }
+.papers h3 a { text-decoration: none; }
+.papers p { margin: 0 0 8px; }
+.paper-meta { font-size: 0.8rem; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
+.lens { font-size: 0.95rem; color: var(--muted); font-style: italic; }
+.lens span { font-style: normal; font-weight: 600; color: #d9a441; }
