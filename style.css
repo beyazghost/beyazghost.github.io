@@ -436,3 +436,22 @@ code { font-size: 0.85em; }
 .story .byline { font-family: var(--sans); }
 
 .story .site-footer .wrap { font-family: var(--sans); }
+
+/* Story figures: wide stills and side-by-side pairs */
+.story .article figure.wide {
+  width: min(100vw - 2.5rem, 60rem);
+  margin: 2.2em 0 2.2em 50%;
+  transform: translateX(-50%);
+}
+.story .article figure img { display: block; width: 100%; height: auto; }
+.story .article figcaption {
+  margin-top: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+.story .article figure.pair { display: grid; gap: 0.75rem; }
+@media (min-width: 40rem) {
+  .story .article figure.pair { grid-template-columns: 1fr 1fr; }
+}
