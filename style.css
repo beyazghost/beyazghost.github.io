@@ -582,3 +582,10 @@ code { font-size: 0.85em; }
 .votd a { overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { .votd .dot { animation: none; } }
 @media print { .votd { display: none; } }
+.status-list { list-style: none; margin: 0; padding: 0; }
+.status-list li { padding: 0 0 0.75rem; }
+.status-list li + li { border-top: 1px solid var(--hair); padding-top: 0.75rem; }
+.status-list time { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.2rem; }
+.status-box > .status-more { margin: 0 0 0.9rem; }
+.news blockquote { margin: 0.9rem 0; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic; }
+.news-page .news p + p, .news-page .news blockquote + p { margin-top: 0.9rem; }
