@@ -589,3 +589,8 @@ code { font-size: 0.85em; }
 .status-box > .status-more { margin: 0 0 0.9rem; }
 .news blockquote { margin: 0.9rem 0; padding-left: 1rem; border-left: 3px solid var(--accent); font-style: italic; }
 .news-page .news p + p, .news-page .news blockquote + p { margin-top: 0.9rem; }
+
+/* Proof of Life */
+.pol-date { margin: 1.25rem 0 0.5rem; font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.04em; color: var(--muted); }
+.pol-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; grid-template-columns: repeat(3, 1fr); }
+.pol-grid img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border: 1px solid var(--hair); }
