@@ -594,3 +594,36 @@ code { font-size: 0.85em; }
 .pol-date { margin: 1.25rem 0 0.5rem; font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.04em; color: var(--muted); }
 .pol-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; grid-template-columns: repeat(3, 1fr); }
 .pol-grid img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border: 1px solid var(--hair); }
+
+/* Section pages */
+.section-page .pol-grid { margin-top: 0.5rem; }
+
+/* Anonymous comments ("Feel free to speak") */
+.speak-link { margin: 1.25rem 0 0; font-family: var(--sans); font-size: 0.85rem; }
+.speak-link a { color: var(--accent); text-decoration-color: currentColor; }
+section.speak { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--hair); }
+section.speak > h2 { font-family: var(--sans); font-size: 1.35rem; font-weight: 700; margin: 0 0 1.25rem; }
+details.speak { margin-top: 1.25rem; }
+details.speak > summary { cursor: pointer; font-family: var(--sans); font-size: 0.85rem; color: var(--accent); list-style: none; }
+details.speak > summary::-webkit-details-marker { display: none; }
+details.speak > summary::after { content: " \2192"; }
+details.speak[open] > summary::after { content: " \2193"; }
+details.speak[open] > summary { margin-bottom: 1rem; }
+.speak-list { list-style: none; margin: 0; padding: 0; }
+.speak-list li { padding: 0.9rem 0; border-top: 1px solid var(--hair); }
+.speak-list li:first-child { border-top: 0; padding-top: 0; }
+.speak-meta { margin: 0 0 0.3rem; font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.03em; color: var(--muted); }
+.speak-who { color: var(--ink); }
+.speak-body { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.speak-empty { margin: 0 0 1rem; color: var(--muted); font-style: italic; }
+.speak-form { margin-top: 1.25rem; }
+.speak-label { display: block; font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+.speak-form textarea { box-sizing: border-box; width: 100%; font: inherit; font-size: 1rem; color: var(--ink); background: transparent; border: 1px solid var(--hair); border-radius: 4px; padding: 0.7rem 0.8rem; resize: vertical; }
+.speak-form textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.speak-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.speak-widget:not(:empty) { margin-top: 0.6rem; }
+.speak-row { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.7rem; }
+.speak-send { font-family: var(--sans); font-size: 0.85rem; font-weight: 600; color: var(--paper); background: var(--ink); border: 0; border-radius: 4px; padding: 0.55rem 1.2rem; cursor: pointer; }
+.speak-send:disabled { opacity: 0.5; cursor: default; }
+.speak-status { margin: 0; font-family: var(--sans); font-size: 0.8rem; color: var(--muted); }
+.speak-note { margin: 0.8rem 0 0; font-family: var(--sans); font-size: 0.75rem; line-height: 1.5; color: var(--muted); }
