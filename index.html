@@ -393,26 +393,32 @@
 <script src="translate.js" defer></script>
 <script>
 (() => {
-  const API = "https://journo-checkin.journo-sentinel.workers.dev";
+  const API = (window.JOURNO_STATUS_API || "https://journo-status-service.journo-sentinel.workers.dev").replace(/\/$/, "");
+  const statusUrl = API + "/status";
+  const requestUrl = API + "/request";
   const el = document.getElementById("checkin-status");
   const set = (cls, text) => { el.className = "checkin " + cls; el.querySelector(".text").textContent = text; };
-  fetch(API + "/status", { cache: "no-store" })
-    .then(r => r.json())
-    .then(d => {
-      if (d.status === "ok") set("ok", "Safe · checked in within the last " + d.window_hours + " hours");
+
+  fetch(statusUrl, { cache: "no-store" })
+    .then(async (r) => {
+      if (!r.ok) throw new Error("status unavailable");
+      const d = await r.json();
+      if (d.status === "ok") set("ok", "Checked in within the last " + d.window_hours + " hours");
       else if (d.status === "overdue") set("overdue", "Missed check-in: no check-in for over " + d.window_hours + " hours. See the Safety Protocol below.");
       else set("unknown", "Check-in status unavailable");
     })
     .catch(() => set("unknown", "Check-in status unavailable"));
 
   const form = document.getElementById("welfare-form");
+  if (!form) return;
+
   const out = form.querySelector(".form-result");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = form.querySelector("button");
     btn.disabled = true; out.textContent = "Sending…";
     try {
-      const r = await fetch(API + "/request", {
+      const r = await fetch(requestUrl, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(Object.fromEntries(new FormData(form))),

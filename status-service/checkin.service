@@ -1,0 +1,15 @@
+[Unit]
+Description=Journo Safety Check-in
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/chosen/Projects/JHub/beyazghost.github.io/status-service
+EnvironmentFile=/home/chosen/Projects/JHub/beyazghost.github.io/status-service/.env
+ExecStart=/usr/bin/env bash -lc 'cd /home/chosen/Projects/JHub/beyazghost.github.io/status-service && node checkin.js'
+Restart=always
+RestartSec=300
+
+[Install]
+WantedBy=multi-user.target

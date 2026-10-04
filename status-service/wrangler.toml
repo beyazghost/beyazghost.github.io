@@ -1,0 +1,13 @@
+name = "journo-status-service"
+main = "src/index.ts"
+compatibility_date = "2024-09-01"
+workers_dev = true
+
+[vars]
+STATUS_TOKEN = "replace-with-a-long-random-token"
+STATUS_SECRET = "replace-with-a-long-random-secret"
+ALLOWED_ORIGIN = "*"
+
+[[kv_namespaces]]
+binding = "STATUS_KV"
+id = "218a75a0460643d39040e6a2fd41f593"
