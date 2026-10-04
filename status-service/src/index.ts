@@ -3,6 +3,12 @@ export interface Env {
   STATUS_SECRET?: string;
   ALLOWED_ORIGIN?: string;
   STATUS_KV?: KVNamespace;
+  DASHBOARD_PASSWORD?: string;
+  DASHBOARD_SESSION_SECRET?: string;
+  CLOUDFLARE_API_TOKEN?: string;
+  CLOUDFLARE_ACCOUNT_ID?: string;
+  CLOUDFLARE_PAGES_PROJECT?: string;
+  COMMENTS_API_URL?: string;
 }
 
 type StatusRecord = {
@@ -110,6 +116,145 @@ const checkStatusWindow = (record: StatusRecord): StatusRecord => {
   return record;
 };
 
+const getDashboardSecret = (env: Env) => env.DASHBOARD_SESSION_SECRET || env.STATUS_SECRET || "local-dashboard-secret";
+
+const createDashboardToken = async (env: Env) => {
+  const payload = { user: "admin", exp: Date.now() + 60 * 60 * 1000 };
+  const encoded = btoa(JSON.stringify(payload));
+  const signature = await makeSignature(encoded, getDashboardSecret(env));
+  return `${encoded}.${signature}`;
+};
+
+const verifyDashboardToken = async (env: Env, token: string | null) => {
+  if (!token) return false;
+  const [encoded, signature] = token.split(".");
+  if (!encoded || !signature) return false;
+
+  const expectedSignature = await makeSignature(encoded, getDashboardSecret(env));
+  if (signature !== expectedSignature) return false;
+
+  try {
+    const payload = JSON.parse(atob(encoded));
+    return payload.user === "admin" && Number(payload.exp) > Date.now();
+  } catch {
+    return false;
+  }
+};
+
+const getCloudflareProjectStatus = async (env: Env) => {
+  const token = env.CLOUDFLARE_API_TOKEN;
+  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
+  const projectName = env.CLOUDFLARE_PAGES_PROJECT;
+
+  if (!token || !accountId || !projectName) {
+    return {
+      configured: false,
+      message: "Cloudflare Pages credentials are not configured yet.",
+      project: projectName || "spbzorro",
+    };
+  }
+
+  try {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectName}`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json() as {
+      errors?: Array<{ message?: string }>;
+      result?: Record<string, unknown>;
+    };
+    if (!response.ok) {
+      return {
+        configured: true,
+        ok: false,
+        error: data?.errors?.[0]?.message || "Cloudflare API request failed.",
+      };
+    }
+
+    const project = (data.result || {}) as Record<string, unknown>;
+    const deployment = (project.latest_deployment as Record<string, unknown> | undefined) || (project.deployment as Record<string, unknown> | undefined) || {};
+
+    return {
+      configured: true,
+      ok: true,
+      project: project.name || projectName,
+      url: project.subdomain ? `https://${project.subdomain}` : "https://spbzorro.pages.dev",
+      production_branch: project.production_branch || "production",
+      last_deployment: deployment.created_on || deployment.id || null,
+      status: project.latest_deployment ? "active" : "unknown",
+    };
+  } catch (error) {
+    return {
+      configured: true,
+      ok: false,
+      error: error instanceof Error ? error.message : "Unknown Cloudflare API error.",
+    };
+  }
+};
+
+const getWelfareEntries = async (env: Env) => {
+  if (!env.STATUS_KV) {
+    return { total: 0, entries: [] };
+  }
+
+  const list = await env.STATUS_KV.list({ prefix: "request-" });
+  const entries = await Promise.all(
+    (list.keys || []).map(async ({ name }) => {
+      const raw = await env.STATUS_KV!.get(name);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return {
+    total: entries.filter(Boolean).length,
+    entries: entries.filter(Boolean).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
+  };
+};
+
+const getCommentEntries = async (env: Env) => {
+  const apiUrl = env.COMMENTS_API_URL || "https://journo-comments.journo-sentinel.workers.dev";
+  const threads = [
+    "news-birthday-update",
+    "news-travel-update",
+    "news-to-the-five-thousand",
+    "news-sim-hacking",
+    "news-old-accounts",
+    "proof-of-life",
+    "safety",
+  ];
+
+  const results: Array<{ body: string; created_at: string; thread: string }> = [];
+
+  for (const thread of threads) {
+    try {
+      const response = await fetch(`${apiUrl}/comments?thread=${encodeURIComponent(thread)}`);
+      if (!response.ok) continue;
+      const payload = await response.json() as { comments?: Array<{ body: string; created_at: string }> };
+      for (const comment of payload.comments || []) {
+        results.push({ ...comment, thread });
+      }
+    } catch {
+      // Ignore individual thread failures and continue collecting the rest.
+    }
+  }
+
+  return {
+    total: results.length,
+    entries: results
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 25),
+  };
+};
+
 const requireWordCheck = async (body: { safe_word?: string; duress_word?: string; status?: string } | null) => {
   if (!body) return false;
 
@@ -212,6 +357,47 @@ export default {
       } catch {
         return json({ error: "Invalid welfare request payload" }, env, { status: 400 });
       }
+    }
+
+    if (url.pathname === "/dashboard/login") {
+      if (request.method !== "POST") {
+        return json({ error: "Method not allowed" }, env, { status: 405 });
+      }
+
+      try {
+        const body = await request.json<{ password?: string }>();
+        if (!body || body.password !== env.DASHBOARD_PASSWORD) {
+          return json({ error: "Invalid password" }, env, { status: 401 });
+        }
+
+        const token = await createDashboardToken(env);
+        return json({ ok: true, token }, env, { status: 200 });
+      } catch {
+        return json({ error: "Invalid login payload" }, env, { status: 400 });
+      }
+    }
+
+    if (url.pathname === "/dashboard/data") {
+      const auth = request.headers.get("authorization") || "";
+      const token = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+
+      if (!(await verifyDashboardToken(env, token))) {
+        return json({ error: "Unauthorized" }, env, { status: 401 });
+      }
+
+      const [cloudflare, welfare, comments] = await Promise.all([
+        getCloudflareProjectStatus(env),
+        getWelfareEntries(env),
+        getCommentEntries(env),
+      ]);
+
+      return json({
+        ok: true,
+        timestamp: new Date().toISOString(),
+        cloudflare,
+        welfare,
+        comments,
+      }, env, { status: 200 });
     }
 
     return json({ error: "Not found" }, env, { status: 404 });

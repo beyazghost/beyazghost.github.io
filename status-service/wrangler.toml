@@ -7,6 +7,12 @@ workers_dev = true
 STATUS_TOKEN = "replace-with-a-long-random-token"
 STATUS_SECRET = "replace-with-a-long-random-secret"
 ALLOWED_ORIGIN = "*"
+DASHBOARD_PASSWORD = "zorro-dashboard-2026"
+DASHBOARD_SESSION_SECRET = "zorro-dashboard-session"
+CLOUDFLARE_API_TOKEN = ""
+CLOUDFLARE_ACCOUNT_ID = ""
+CLOUDFLARE_PAGES_PROJECT = "spbzorro"
+COMMENTS_API_URL = "https://journo-comments.journo-sentinel.workers.dev"
 
 [[kv_namespaces]]
 binding = "STATUS_KV"

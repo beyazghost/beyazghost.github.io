@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site analytics dashboard</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #111827;
+      --panel-border: rgba(255,255,255,0.08);
+      --muted: #b5bfce;
+      --text: #edf2f7;
+      --accent: #f8c033;
+      --ok: #2bc46c;
+      --danger: #ff7b7b;
+      --shadow: rgba(0,0,0,0.38);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: Inter, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+    body { padding: 2rem 1rem; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .login-box {
+      max-width: 420px; margin: 5rem auto 0;
+      background: rgba(17,24,39,0.95);
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 2rem;
+      box-shadow: 0 22px 60px var(--shadow);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .login-box h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    label { display: block; margin: 1rem 0 0.35rem; color: var(--muted); font-size: 0.9rem; }
+    input {
+      width: 100%;
+      border: 1px solid var(--panel-border);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.8rem 0.9rem;
+      font-size: 1rem;
+    }
+    button {
+      cursor: pointer;
+      margin-top: 1rem;
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, #f8c033, #f7a927);
+      color: #111827;
+      font-weight: 800;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .error { color: var(--danger); margin-top: 0.8rem; font-size: 0.9rem; min-height: 1.2em; }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .header h2 { margin: 0; }
+    .header button { width: auto; padding: 0.6rem 1rem; margin: 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      background: rgba(17,24,39,0.92);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.1rem 1rem;
+      box-shadow: 0 12px 26px var(--shadow);
+    }
+    .card h3 { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+    .big { font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 700; }
+    .muted { color: var(--muted); font-size: 0.9rem; }
+    .stack { display: grid; gap: 1rem; }
+    ul { padding-left: 1.1rem; margin: 0; }
+    li { margin-bottom: 0.7rem; }
+    .item {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--panel-border);
+      border-radius: 11px;
+      padding: 0.75rem 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .meta { color: var(--muted); font-size: 0.78rem; }
+    .status-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(43,196,108,0.14);
+      color: var(--ok);
+      border: 1px solid rgba(43,196,108,0.3);
+      margin-top: 0.35rem;
+    }
+    .status-badge.warn { background: rgba(248,192,51,0.12); border-color: rgba(248,192,51,0.35); color: var(--accent); }
+    .status-badge.error { background: rgba(255,123,123,0.12); border-color: rgba(255,123,123,0.32); color: var(--danger); }
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .login-box { margin-top: 2rem; padding: 1.5rem; }
+      .header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="login-screen" class="screen active">
+      <div class="login-box">
+        <div class="eyebrow">Private access</div>
+        <h1>Site analytics</h1>
+        <p class="muted">Login to review Cloudflare deployment info, welfare submissions, and recent comments.</p>
+        <form id="login-form">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter dashboard password" required>
+          <button type="submit">Open dashboard</button>
+        </form>
+        <p id="login-error" class="error" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen">
+      <div class="header">
+        <div>
+          <div class="eyebrow">Overview</div>
+          <h2>Cloudflare + site intel</h2>
+        </div>
+        <button id="logout-btn" type="button">Log out</button>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <h3>Cloudflare project</h3>
+          <div id="project-name" class="big">—</div>
+          <div id="project-url" class="muted">—</div>
+          <div id="project-status" class="status-badge">checking…</div>
+        </article>
+        <article class="card">
+          <h3>Welfare requests</h3>
+          <div id="welfare-total" class="big">0</div>
+          <div class="muted">submitted via the safety form</div>
+        </article>
+        <article class="card">
+          <h3>Recent comments</h3>
+          <div id="comment-total" class="big">0</div>
+          <div class="muted">across the public speak threads</div>
+        </article>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <h3>Latest welfare submissions</h3>
+          <div id="welfare-list">Loading…</div>
+        </section>
+
+        <section class="card">
+          <h3>Recent comments</h3>
+          <div id="comment-list">Loading…</div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = window.JOURNO_STATUS_API || "https://journo-status-service.journo-sentinel.workers.dev";
+    const TOKEN_KEY = "journo-dashboard-token";
+
+    const loginScreen = document.getElementById("login-screen");
+    const dashboardScreen = document.getElementById("dashboard-screen");
+    const loginForm = document.getElementById("login-form");
+    const loginError = document.getElementById("login-error");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    const projectName = document.getElementById("project-name");
+    const projectUrl = document.getElementById("project-url");
+    const projectStatus = document.getElementById("project-status");
+    const welfareTotal = document.getElementById("welfare-total");
+    const commentTotal = document.getElementById("comment-total");
+    const welfareList = document.getElementById("welfare-list");
+    const commentList = document.getElementById("comment-list");
+
+    function showScreen(which) {
+      loginScreen.classList.toggle("active", which === "login");
+      dashboardScreen.classList.toggle("active", which === "dashboard");
+    }
+
+    function getToken() {
+      return localStorage.getItem(TOKEN_KEY) || "";
+    }
+
+    function setToken(token) {
+      if (token) localStorage.setItem(TOKEN_KEY, token);
+      else localStorage.removeItem(TOKEN_KEY);
+    }
+
+    function renderTimestamp(value) {
+      if (!value) return "—";
+      try {
+        return new Date(value).toLocaleString();
+      } catch {
+        return value;
+      }
+    }
+
+    function formatSubmission(submission) {
+      const payload = submission?.payload || {};
+      const name = payload.name || "Unnamed request";
+      const contact = payload.contact || "No contact provided";
+      const reason = payload.reason || "No reason provided";
+      const created = submission?.timestamp || payload.timestamp || "Unknown time";
+      return `
+        <div class="item">
+          <strong>${name}</strong><br>
+          <span class="meta">${renderTimestamp(created)} · ${contact}</span>
+          <p>${reason}</p>
+        </div>
+      `;
+    }
+
+    function formatComment(comment) {
+      const body = comment?.body || "No body provided";
+      const thread = comment?.thread || "unknown";
+      const created = comment?.created_at || "Unknown time";
+      return `
+        <div class="item">
+          <strong>${thread}</strong><br>
+          <span class="meta">${renderTimestamp(created)}</span>
+          <p>${body}</p>
+        </div>
+      `;
+    }
+
+    async function loadDashboard() {
+      const token = getToken();
+      if (!token) {
+        showScreen("login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API}/dashboard/data`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+          setToken("");
+          showScreen("login");
+          loginError.textContent = "Session expired. Please log in again.";
+          return;
+        }
+
+        const data = await response.json();
+        const cloudflare = data.cloudflare || {};
+        const welfare = data.welfare || { entries: [], total: 0 };
+        const comments = data.comments || { entries: [], total: 0 };
+
+        showScreen("dashboard");
+        projectName.textContent = cloudflare.project || "spbzorro";
+        projectUrl.textContent = cloudflare.url || "https://spbzorro.pages.dev";
+
+        if (cloudflare.ok === false) {
+          projectStatus.textContent = "error";
+          projectStatus.className = "status-badge error";
+          projectStatus.title = cloudflare.error || "Cloudflare API error";
+        } else if (!cloudflare.configured) {
+          projectStatus.textContent = "not configured";
+          projectStatus.className = "status-badge warn";
+        } else {
+          projectStatus.textContent = "online";
+          projectStatus.className = "status-badge";
+        }
+
+        welfareTotal.textContent = String(welfare.total || 0);
+        commentTotal.textContent = String(comments.total || 0);
+
+        welfareList.innerHTML = welfare.entries?.length
+          ? welfare.entries.slice(0, 10).map(formatSubmission).join("")
+          : "<div class=\"muted\">No welfare submissions have been recorded yet.</div>";
+
+        commentList.innerHTML = comments.entries?.length
+          ? comments.entries.slice(0, 10).map(formatComment).join("")
+          : "<div class=\"muted\">No public comments have been posted yet.</div>";
+      } catch (error) {
+        showScreen("login");
+        loginError.textContent = "Dashboard service is unavailable right now.";
+      }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      loginError.textContent = "";
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch(`${API}/dashboard/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password })
+        });
+
+        const payload = await response.json();
+        if (!response.ok || !payload.token) {
+          throw new Error(payload.error || "Invalid password");
+        }
+
+        setToken(payload.token);
+        await loadDashboard();
+      } catch (error) {
+        loginError.textContent = error.message || "Login failed.";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      setToken("");
+      showScreen("login");
+      document.getElementById("password").value = "";
+      loginError.textContent = "";
+    });
+
+    if (getToken()) {
+      loadDashboard();
+    } else {
+      showScreen("login");
+    }
+  </script>
+</body>
+</html>
