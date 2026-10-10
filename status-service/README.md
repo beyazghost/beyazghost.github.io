@@ -44,7 +44,18 @@ The script stores only the timestamp of the last successful check-in in `~/.jour
 
 3. Add the namespace binding to `wrangler.toml`.
 
-4. Update the token and secret values in `wrangler.toml`.
+4. Configure sensitive values as encrypted Worker secrets. Run these commands
+   from this directory and enter each value at Wrangler's prompt:
+
+   ```bash
+   npx wrangler secret put STATUS_TOKEN
+   npx wrangler secret put STATUS_SECRET
+   npx wrangler secret put DASHBOARD_PASSWORD
+   npx wrangler secret put DASHBOARD_SESSION_SECRET
+   npx wrangler secret put CLOUDFLARE_API_TOKEN
+   ```
+
+   Do not put these values in `wrangler.toml` or commit them to Git.
 
 5. Deploy:
 

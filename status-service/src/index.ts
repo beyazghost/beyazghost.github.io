@@ -141,16 +141,53 @@ const verifyDashboardToken = async (env: Env, token: string | null) => {
   }
 };
 
+const fetchJson = async <T>(url: string, env: Env): Promise<T | null> => {
+  if (!env.CLOUDFLARE_API_TOKEN) return null;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${env.CLOUDFLARE_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) return null;
+    return await response.json() as T;
+  } catch {
+    return null;
+  }
+};
+
+const discoverCloudflareAccountId = async (env: Env): Promise<string | null> => {
+  if (env.CLOUDFLARE_ACCOUNT_ID) return env.CLOUDFLARE_ACCOUNT_ID;
+  if (!env.CLOUDFLARE_API_TOKEN) return null;
+
+  const accounts = await fetchJson<Array<{ id?: string; name?: string }>>(
+    "https://api.cloudflare.com/client/v4/accounts",
+    env,
+  );
+
+  return accounts?.[0]?.id || null;
+};
+
 const getCloudflareProjectStatus = async (env: Env) => {
   const token = env.CLOUDFLARE_API_TOKEN;
-  const accountId = env.CLOUDFLARE_ACCOUNT_ID;
-  const projectName = env.CLOUDFLARE_PAGES_PROJECT;
+  const projectName = env.CLOUDFLARE_PAGES_PROJECT || "spbzorro";
 
-  if (!token || !accountId || !projectName) {
+  if (!token || !projectName) {
     return {
       configured: false,
       message: "Cloudflare Pages credentials are not configured yet.",
-      project: projectName || "spbzorro",
+      project: projectName,
+    };
+  }
+
+  const accountId = await discoverCloudflareAccountId(env);
+  if (!accountId) {
+    return {
+      configured: false,
+      message: "Cloudflare account could not be discovered for this token.",
+      project: projectName,
     };
   }
 
@@ -181,10 +218,10 @@ const getCloudflareProjectStatus = async (env: Env) => {
     return {
       configured: true,
       ok: true,
-      project: project.name || projectName,
+      project: (project.name as string) || projectName,
       url: project.subdomain ? `https://${project.subdomain}` : "https://spbzorro.pages.dev",
-      production_branch: project.production_branch || "production",
-      last_deployment: deployment.created_on || deployment.id || null,
+      production_branch: (project.production_branch as string) || "production",
+      last_deployment: (deployment.created_on as string) || (deployment.id as string) || null,
       status: project.latest_deployment ? "active" : "unknown",
     };
   } catch (error) {
@@ -194,6 +231,47 @@ const getCloudflareProjectStatus = async (env: Env) => {
       error: error instanceof Error ? error.message : "Unknown Cloudflare API error.",
     };
   }
+};
+
+const getCloudflareDeploymentHistory = async (env: Env) => {
+  const projectName = env.CLOUDFLARE_PAGES_PROJECT || "spbzorro";
+  if (!env.CLOUDFLARE_API_TOKEN) return [] as Array<{ timestamp: string; count: number }>;
+
+  const accountId = await discoverCloudflareAccountId(env);
+  if (!accountId) return [] as Array<{ timestamp: string; count: number }>;
+
+  const projects = await fetchJson<{ result?: Array<{ name?: string }> }>(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects`,
+    env,
+  );
+
+  if (!projects?.result?.find((project) => project.name === projectName)) {
+    return [] as Array<{ timestamp: string; count: number }>;
+  }
+
+  const deployments = await fetchJson<{ result?: Array<{ created_on?: string }> }>(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectName}/deployments?per_page=100`,
+    env,
+  );
+
+  const buckets = new Map<string, number>();
+  for (const deployment of deployments?.result || []) {
+    if (!deployment.created_on) continue;
+    const date = new Date(deployment.created_on);
+    const key = date.toISOString().slice(0, 10);
+    buckets.set(key, (buckets.get(key) || 0) + 1);
+  }
+
+  const history: Array<{ timestamp: string; count: number }> = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i -= 1) {
+    const date = new Date(today);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(today.getDate() - i);
+    const key = date.toISOString().slice(0, 10);
+    history.push({ timestamp: key, count: buckets.get(key) || 0 });
+  }
+  return history;
 };
 
 const getWelfareEntries = async (env: Env) => {
@@ -253,6 +331,50 @@ const getCommentEntries = async (env: Env) => {
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 25),
   };
+};
+
+const buildHistoryFromEntries = (welfareEntries: { timestamp?: string }[], commentEntries: { created_at?: string }[], deploymentHistory: Array<{ timestamp: string; count: number }>) => {
+  const byDay = new Map<string, { welfare: number; comments: number; deployments: number }>();
+  const today = new Date();
+
+  for (let i = 6; i >= 0; i -= 1) {
+    const date = new Date(today);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(today.getDate() - i);
+    const key = date.toISOString().slice(0, 10);
+    byDay.set(key, { welfare: 0, comments: 0, deployments: 0 });
+  }
+
+  for (const entry of welfareEntries) {
+    if (!entry.timestamp) continue;
+    const key = new Date(entry.timestamp).toISOString().slice(0, 10);
+    if (byDay.has(key)) {
+      byDay.get(key)!.welfare += 1;
+    }
+  }
+
+  for (const entry of commentEntries) {
+    if (!entry.created_at) continue;
+    const key = new Date(entry.created_at).toISOString().slice(0, 10);
+    if (byDay.has(key)) {
+      byDay.get(key)!.comments += 1;
+    }
+  }
+
+  for (const deployment of deploymentHistory) {
+    if (byDay.has(deployment.timestamp)) {
+      byDay.get(deployment.timestamp)!.deployments += deployment.count;
+    }
+  }
+
+  return Array.from(byDay.entries()).map(([date, values]) => ({
+    date,
+    label: new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    welfare: values.welfare,
+    comments: values.comments,
+    deployments: values.deployments,
+    total: values.welfare + values.comments + values.deployments,
+  }));
 };
 
 const requireWordCheck = async (body: { safe_word?: string; duress_word?: string; status?: string } | null) => {
@@ -385,10 +507,11 @@ export default {
         return json({ error: "Unauthorized" }, env, { status: 401 });
       }
 
-      const [cloudflare, welfare, comments] = await Promise.all([
+      const [cloudflare, welfare, comments, deploymentHistory] = await Promise.all([
         getCloudflareProjectStatus(env),
         getWelfareEntries(env),
         getCommentEntries(env),
+        getCloudflareDeploymentHistory(env),
       ]);
 
       return json({
@@ -397,6 +520,11 @@ export default {
         cloudflare,
         welfare,
         comments,
+        history: buildHistoryFromEntries(
+          welfare.entries,
+          comments.entries,
+          deploymentHistory,
+        ),
       }, env, { status: 200 });
     }
 
