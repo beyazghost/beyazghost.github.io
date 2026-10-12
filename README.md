@@ -77,3 +77,19 @@ git add -A && git commit -m "Update bio/projects" && git push
 
 Both the GitHub Pages and Cloudflare Pages mirrors will redeploy automatically
 on push since both are connected to the same repo.
+
+## Offline writing desk
+
+Open `/dashboard/writer.html` while online once so the browser can cache the
+editor for later offline use. Drafts stay in that browser. Choose the root of
+this site’s local source folder, then write a Reflection, Research entry,
+Report, or Status update. The editor creates the matching HTML and updates the
+home page, section list, and sitemap. It does not send draft text to a server.
+
+The folder-writing feature uses the browser’s local directory picker (Chrome
+or Edge). If it is unavailable, **Download snippets** exports the entry and
+the small HTML fragments to add by hand. Choose **Publish site…** to open a
+local Ghostty terminal. Review the pending file list, type `PUSH`, then enter a
+commit message. The script pushes `main` (triggering the GitHub Pages and
+Cloudflare Pages deployments) and deploys the status-service Worker. The browser
+may ask to open Ghostty the first time you use the button.

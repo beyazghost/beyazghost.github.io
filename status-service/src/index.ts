@@ -300,7 +300,7 @@ const getWelfareEntries = async (env: Env) => {
 
 const getCommentEntries = async (env: Env) => {
   const apiUrl = env.COMMENTS_API_URL || "https://journo-comments.journo-sentinel.workers.dev";
-  const threads = [
+  const threads = new Set([
     "news-birthday-update",
     "news-travel-update",
     "news-to-the-five-thousand",
@@ -308,21 +308,43 @@ const getCommentEntries = async (env: Env) => {
     "news-old-accounts",
     "proof-of-life",
     "safety",
-  ];
+  ]);
+  const siteUrl = "https://spbzorro.pages.dev";
+  const pages = new Set(["/", "/news", "/reflections", "/refractions", "/reports", "/proof-of-life"]);
+
+  try {
+    const response = await fetch(`${siteUrl}/sitemap.xml`);
+    if (response.ok) {
+      const sitemap = await response.text();
+      for (const match of sitemap.matchAll(/<loc>https:\/\/spbzorro\.pages\.dev(\/writing\/[a-z0-9-]+)<\/loc>/gi)) {
+        pages.add(match[1]);
+      }
+    }
+  } catch {
+    // Continue with the current static pages if sitemap discovery is offline.
+  }
+
+  const pageResults = await Promise.allSettled([...pages].map(async (page) => {
+    const response = await fetch(`${siteUrl}${page}`);
+    if (!response.ok) return "";
+    return await response.text();
+  }));
+  for (const result of pageResults) {
+    if (result.status !== "fulfilled") continue;
+    for (const match of result.value.matchAll(/data-thread=["']([a-z0-9_-]{1,100})["']/gi)) {
+      threads.add(match[1]);
+    }
+  }
 
   const results: Array<{ body: string; created_at: string; thread: string }> = [];
-
-  for (const thread of threads) {
-    try {
-      const response = await fetch(`${apiUrl}/comments?thread=${encodeURIComponent(thread)}`);
-      if (!response.ok) continue;
-      const payload = await response.json() as { comments?: Array<{ body: string; created_at: string }> };
-      for (const comment of payload.comments || []) {
-        results.push({ ...comment, thread });
-      }
-    } catch {
-      // Ignore individual thread failures and continue collecting the rest.
-    }
+  const commentResults = await Promise.allSettled([...threads].slice(0, 30).map(async (thread) => {
+    const response = await fetch(`${apiUrl}/comments?thread=${encodeURIComponent(thread)}`);
+    if (!response.ok) return [] as Array<{ body: string; created_at: string }>;
+    const payload = await response.json() as { comments?: Array<{ body: string; created_at: string }> };
+    return (payload.comments || []).map((comment) => ({ ...comment, thread }));
+  }));
+  for (const result of commentResults) {
+    if (result.status === "fulfilled") results.push(...result.value);
   }
 
   return {

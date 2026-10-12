@@ -1,0 +1,9 @@
+{
+  "name": "Zorro Writing Desk",
+  "short_name": "Writing Desk",
+  "start_url": "/dashboard/writer.html",
+  "scope": "/dashboard/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117"
+}

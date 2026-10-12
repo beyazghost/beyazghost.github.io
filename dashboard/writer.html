@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1117">
+  <title>Offline writing desk... Zorro</title>
+  <link rel="manifest" href="writer.webmanifest">
+  <style>
+    :root { color-scheme: dark; --bg:#0d1117; --panel:#111827; --line:rgba(255,255,255,.11); --muted:#b5bfce; --text:#edf2f7; --accent:#f8c033; --ok:#2bc46c; --danger:#ff7b7b; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:1.25rem; background:var(--bg); color:var(--text); font:16px/1.5 Inter,"Segoe UI",sans-serif; }
+    .wrap { max-width:1180px; margin:0 auto; }
+    a { color:var(--accent); }
+    header { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin:0 0 1.25rem; }
+    .eyebrow { margin:0 0 .25rem; color:var(--accent); font-size:.74rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+    h1 { margin:.1rem 0 .4rem; font:500 clamp(1.8rem,4vw,2.6rem)/1.1 Georgia,serif; }
+    header p:last-child { margin:0; color:var(--muted); }
+    .top-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .top-actions button { width:auto; }
+    button, select, input, textarea { font:inherit; }
+    button { cursor:pointer; border:1px solid var(--line); border-radius:9px; padding:.65rem .85rem; background:#1c2736; color:var(--text); font-weight:650; }
+    button:hover { border-color:var(--accent); }
+    button.primary { color:#111827; background:var(--accent); border-color:var(--accent); }
+    button:disabled { cursor:not-allowed; opacity:.55; }
+    .grid { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr); gap:1rem; align-items:start; }
+    .panel { min-width:0; padding:1rem; background:var(--panel); border:1px solid var(--line); border-radius:14px; }
+    .panel h2 { margin:0 0 .75rem; font-size:1rem; }
+    .fields { display:grid; grid-template-columns:1fr 1fr; gap:0 .75rem; }
+    .field { min-width:0; }
+    .field.wide { grid-column:1/-1; }
+    label { display:block; margin:.55rem 0 .3rem; color:var(--muted); font-size:.84rem; }
+    input, select, textarea { width:100%; min-height:2.65rem; padding:.6rem .7rem; color:var(--text); background:#0c131d; border:1px solid var(--line); border-radius:8px; }
+    textarea { min-height:5rem; resize:vertical; }
+    input:focus, select:focus, textarea:focus, [contenteditable]:focus { outline:2px solid rgba(248,192,51,.45); outline-offset:1px; }
+    .hint, .privacy { color:var(--muted); font-size:.82rem; }
+    .privacy { margin:.75rem 0 0; padding:.65rem .75rem; border-left:3px solid var(--ok); background:rgba(43,196,108,.07); }
+    .toolbar { display:flex; flex-wrap:wrap; gap:.35rem; margin:.65rem 0 .4rem; }
+    .toolbar button { min-width:2.6rem; padding:.4rem .55rem; font-size:.86rem; }
+    #body-editor { min-height:18rem; padding:1rem; border:1px solid var(--line); border-radius:9px; background:#0c131d; line-height:1.65; overflow-wrap:anywhere; }
+    #body-editor:empty::before { content:"Write your entry here. Use the toolbar for headings, emphasis, quotes, and lists."; color:#8390a1; }
+    #body-editor h2, #body-editor h3 { line-height:1.25; }
+    .actions { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+    .actions button { width:auto; }
+    .status { min-height:1.5rem; margin:.75rem 0 0; color:var(--muted); font-size:.87rem; }
+    .status.ok { color:var(--ok); }
+    .status.error { color:var(--danger); }
+    .preview-frame { display:block; width:100%; height:760px; background:#f8f6f1; border:1px solid var(--line); border-radius:10px; }
+    .preview-empty { display:grid; min-height:300px; place-items:center; color:var(--muted); text-align:center; }
+    .small { font-size:.8rem; }
+    @media(max-width:850px) { body{padding:.75rem} .grid{grid-template-columns:1fr} .preview-frame{height:640px} }
+    @media(max-width:540px) { header{display:block} .top-actions{margin-top:.75rem} .fields{grid-template-columns:1fr} .field.wide{grid-column:auto} .actions button{flex:1} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">spbzorro.pages.dev · local authoring</p>
+        <h1>Writing desk</h1>
+        <p>Write reflections, research, reports, or status updates in the site’s existing style.</p>
+      </div>
+      <nav class="top-actions" aria-label="Dashboard navigation">
+        <a href="index.html">Analytics dashboard</a>
+        <button id="choose-folder" type="button">Choose site folder</button>
+        <button id="publish-site" type="button" title="Open a terminal to review and publish site changes">Publish site…</button>
+      </nav>
+    </header>
+
+    <div class="grid">
+      <main class="panel">
+        <h2>New entry</h2>
+        <div class="fields">
+          <div class="field wide">
+            <label for="category">Section</label>
+            <select id="category">
+              <option value="reflection">Reflection · Reflections</option>
+              <option value="research">Research · Refractions</option>
+              <option value="report">Report · Reports</option>
+              <option value="news">News / status update</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="title">Title</label>
+            <input id="title" maxlength="140" autocomplete="off" placeholder="The title of this entry">
+          </div>
+          <div class="field" id="subtitle-field">
+            <label for="subtitle">Subtitle</label>
+            <input id="subtitle" maxlength="220" placeholder="A short deck or subtitle">
+          </div>
+          <div class="field">
+            <label for="date">Publication date</label>
+            <input id="date" type="date">
+          </div>
+          <div class="field wide" id="description-field">
+            <label for="description">Listing description</label>
+            <textarea id="description" maxlength="280" placeholder="The short description shown in the section lists."></textarea>
+          </div>
+          <div class="field wide" id="slug-field">
+            <label for="slug">Page address</label>
+            <input id="slug" maxlength="80" pattern="[a-z0-9-]+" autocomplete="off" placeholder="created-from-title">
+            <p class="hint">This becomes <code>/writing/your-address</code>. You can edit it before saving.</p>
+          </div>
+        </div>
+
+        <div id="toolbar" class="toolbar" aria-label="Writing formatting">
+          <button type="button" data-command="formatBlock" data-value="p" title="Paragraph">¶</button>
+          <button type="button" data-command="formatBlock" data-value="h2" title="Section heading">H2</button>
+          <button type="button" data-command="formatBlock" data-value="h3" title="Subheading">H3</button>
+          <button type="button" data-command="bold" title="Bold"><strong>B</strong></button>
+          <button type="button" data-command="italic" title="Italic"><em>I</em></button>
+          <button type="button" data-command="formatBlock" data-value="blockquote" title="Quote">“ ”</button>
+          <button type="button" data-command="insertUnorderedList" title="Bulleted list">• List</button>
+          <button type="button" data-command="insertOrderedList" title="Numbered list">1. List</button>
+          <button type="button" data-command="insertHorizontalRule" title="Divider">Rule</button>
+          <button id="insert-link" type="button" title="Insert link">Link</button>
+        </div>
+        <div id="body-editor" contenteditable="true" role="textbox" aria-label="Entry text" aria-multiline="true"></div>
+        <p id="privacy-note" class="privacy">Drafts are saved in this browser. Writing is not sent to the dashboard or an online service.</p>
+        <div class="actions">
+          <button id="new-entry" type="button">New entry</button>
+          <button id="save-draft" type="button">Save draft</button>
+          <button id="preview-entry" type="button">Preview</button>
+          <button id="write-entry" class="primary" type="button">Write to site folder</button>
+          <button id="download-fallback" type="button">Download snippets</button>
+        </div>
+        <p id="folder-support" class="hint"></p>
+        <div class="fields" style="margin-top:.5rem">
+          <div class="field wide">
+            <label for="draft-list">Saved drafts on this browser</label>
+            <div style="display:flex;gap:.5rem">
+              <select id="draft-list" aria-label="Saved drafts"></select>
+              <button id="load-draft" type="button">Load</button>
+              <button id="delete-draft" type="button">Delete</button>
+            </div>
+          </div>
+        </div>
+        <p id="editor-status" class="status" aria-live="polite"></p>
+        <p class="hint small">Publishing opens a local terminal. The browser may ask whether to open Ghostty; the terminal requires you to type <code>PUSH</code> before publishing.</p>
+        <details class="small">
+          <summary>What gets updated?</summary>
+          <p>Open this desk once while online so its files are cached. After that, drafts and previews work offline. Article entries create <code>writing/&lt;address&gt;.html</code>, add a card to the home page and the selected section, and update the sitemap. News/status entries go to the top of Status Updates and the home page’s current-status list. The editor only writes to the folder you choose. Choose <strong>Publish site…</strong> to review changed files in a terminal and approve the GitHub Pages, Cloudflare Pages, and status-service deployment.</p>
+        </details>
+      </main>
+
+      <section class="panel" aria-label="Entry preview">
+        <h2>Preview in site style</h2>
+        <div id="preview-empty" class="preview-empty">Choose Preview to see how the entry will look on the site.</div>
+        <iframe id="preview" class="preview-frame" title="Entry preview" sandbox="allow-same-origin" hidden></iframe>
+      </section>
+    </div>
+  </div>
+  <script src="writer.js" defer></script>
+</body>
+</html>

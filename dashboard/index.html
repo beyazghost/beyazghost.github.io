@@ -114,6 +114,8 @@
     }
     .status-badge.warn { background: rgba(248,192,51,0.12); border-color: rgba(248,192,51,0.35); color: var(--accent); }
     .status-badge.error { background: rgba(255,123,123,0.12); border-color: rgba(255,123,123,0.32); color: var(--danger); }
+    .dashboard-link { display:inline-flex; align-items:center; padding:.65rem .85rem; border:1px solid var(--panel-border); border-radius:10px; color:var(--text); text-decoration:none; font-size:.9rem; }
+    .dashboard-link:hover { border-color:var(--accent); color:var(--accent); }
     @media (max-width: 600px) {
       body { padding: 1rem; }
       .login-box { margin-top: 2rem; padding: 1.5rem; }
@@ -128,6 +130,7 @@
         <div class="eyebrow">Private access</div>
         <h1>Site analytics</h1>
         <p class="muted">Login to review Cloudflare deployment info, welfare submissions, and recent comments.</p>
+        <p class="muted"><a href="writer.html">Open the offline writing desk</a> · save drafts locally and update your site files without an AI service.</p>
         <form id="login-form">
           <label for="password">Password</label>
           <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter dashboard password" required>
@@ -143,7 +146,10 @@
           <div class="eyebrow">Overview</div>
           <h2>Cloudflare + site intel</h2>
         </div>
-        <button id="logout-btn" type="button">Log out</button>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <a class="dashboard-link" href="writer.html">Offline writing desk</a>
+          <button id="logout-btn" type="button">Log out</button>
+        </div>
       </div>
 
       <div class="grid">
@@ -276,6 +282,12 @@
       }
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+      })[char]);
+    }
+
     function formatSubmission(submission) {
       const payload = submission?.payload || {};
       const name = payload.name || "Unnamed request";
@@ -284,9 +296,9 @@
       const created = submission?.timestamp || payload.timestamp || "Unknown time";
       return `
         <div class="item">
-          <strong>${name}</strong><br>
-          <span class="meta">${renderTimestamp(created)} · ${contact}</span>
-          <p>${reason}</p>
+          <strong>${escapeHtml(name)}</strong><br>
+          <span class="meta">${escapeHtml(renderTimestamp(created))} · ${escapeHtml(contact)}</span>
+          <p>${escapeHtml(reason)}</p>
         </div>
       `;
     }
@@ -297,9 +309,9 @@
       const created = comment?.created_at || "Unknown time";
       return `
         <div class="item">
-          <strong>${thread}</strong><br>
-          <span class="meta">${renderTimestamp(created)}</span>
-          <p>${body}</p>
+          <strong>${escapeHtml(thread)}</strong><br>
+          <span class="meta">${escapeHtml(renderTimestamp(created))}</span>
+          <p>${escapeHtml(body)}</p>
         </div>
       `;
     }
