@@ -1,4 +1,4 @@
-const CACHE = "zorro-writing-desk-v1";
+const CACHE = "zorro-writing-desk-v3";
 const ASSETS = [
   "/dashboard/writer.html",
   "/dashboard/writer.js",
@@ -6,7 +6,18 @@ const ASSETS = [
   "/style.css",
   "/fonts/newsreader-normal.woff2",
   "/fonts/newsreader-italic.woff2",
-  "/writing/author-avatar.svg"
+  "/writing/author-avatar.svg",
+  "/dashboard/studio/studio.js",
+  "/dashboard/studio/site-map.js",
+  "/dashboard/studio/providers.js",
+  "/dashboard/studio/local-sibling.js",
+  "/dashboard/studio/cloud-sibling.js",
+  "/dashboard/studio/capture.js",
+  "/dashboard/studio/images.js",
+  "/dashboard/studio/weave.js",
+  "/dashboard/studio/render.js",
+  "/dashboard/studio/media.js",
+  "/dashboard/studio/idb.js"
 ];
 
 self.addEventListener("install", (event) => {
