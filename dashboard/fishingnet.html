@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Net — wide-scale search + Elasticsearch</title>
+<style>
+:root { --bg:#0d1117; --panel:#111827; --border:rgba(255,255,255,0.08); --muted:#b5bfce; --text:#edf2f7; --accent:#f8c033; --ok:#2bc46c; --danger:#ff7b7b; }
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+body{padding:2rem 1rem}
+.wrap{max-width:1200px;margin:0 auto}
+h1,h2,h3,p{margin-top:0}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.75rem}
+.panel{background:rgba(17,24,39,.95);border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin-bottom:1.25rem;box-shadow:0 22px 60px rgba(0,0,0,.38)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+label{display:block;margin:.75rem 0 .3rem;color:var(--muted);font-size:.85rem}
+input,select,textarea{width:100%;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text);border-radius:10px;padding:.6rem .75rem;font-size:.95rem;font-family:inherit}
+textarea{min-height:90px;resize:vertical}
+button{cursor:pointer;border:none;border-radius:10px;padding:.65rem 1rem;font-weight:700;font-size:.9rem}
+.btn-primary{background:linear-gradient(135deg,#f8c033,#f7a927);color:#111827}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.chip{display:inline-block;padding:.25rem .6rem;border-radius:999px;font-size:.75rem;border:1px solid var(--border);color:var(--muted)}
+.chip.on{color:var(--ok);border-color:var(--ok)}
+.results{list-style:none;padding:0;margin:0}
+.results li{padding:.75rem;border-bottom:1px solid var(--border)}
+.results a{color:var(--accent);text-decoration:none}
+.results .meta{color:var(--muted);font-size:.8rem;margin-top:.25rem}
+.status{font-size:.85rem;color:var(--muted)}
+.ok{color:var(--ok)} .danger{color:var(--danger)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:.5rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+th{color:var(--muted)}
+pre{background:#0b0f14;padding:.75rem;border-radius:8px;overflow:auto;font-size:.8rem;max-height:300px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Backend tool</p>
+  <h1>Fishing Net</h1>
+  <p class="status">Wide-scale internet search across MCP-style search providers, then index/query in Elasticsearch. Keys live only in this browser (localStorage).</p>
+
+  <div class="panel">
+    <h2>Provider keys</h2>
+    <div class="grid">
+      <div><label>Brave Search API key</label><input id="key-brave" type="password" placeholder="BSA..."></div>
+      <div><label>Tavily API key</label><input id="key-tavily" type="password" placeholder="tvly-..."></div>
+      <div><label>Exa API key</label><input id="key-exa" type="password" placeholder="..."></div>
+      <div><label>Serper (Google) API key</label><input id="key-serper" type="password" placeholder="..."></div>
+    </div>
+    <div class="row" style="margin-top:.75rem">
+      <button class="btn-primary" id="save-keys">Save keys</button>
+      <span class="status" id="keys-status"></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Search</h2>
+    <label>Query</label>
+    <input id="q" placeholder="keywords, phrases, listing terms...">
+    <div class="grid">
+      <div><label>Providers</label>
+        <div class="row">
+          <label class="chip"><input type="checkbox" value="brave" checked> Brave</label>
+          <label class="chip"><input type="checkbox" value="tavily" checked> Tavily</label>
+          <label class="chip"><input type="checkbox" value="exa" checked> Exa</label>
+          <label class="chip"><input type="checkbox" value="serper"> Serper</label>
+          <label class="chip"><input type="checkbox" value="ddg" checked> DuckDuckGo</label>
+        </div>
+      </div>
+      <div><label>Site filter (optional)</label><input id="site" placeholder="example.com"></div>
+      <div><label>File type</label><select id="filetype"><option value="">any</option><option value="pdf">pdf</option><option value="doc">doc</option><option value="html">html</option></select></div>
+      <div><label>Results per provider</label><input id="limit" type="number" value="10" min="1" max="50"></div>
+      <div><label>Date from</label><input id="datefrom" type="date"></div>
+      <div><label>Date to</label><input id="dateto" type="date"></div>
+      <div><label>Language</label><input id="lang" placeholder="en"></div>
+      <div><label>Safe search</label><select id="safe"><option value="moderate">moderate</option><option value="strict">strict</option><option value="off">off</option></select></div>
+    </div>
+    <div class="row" style="margin-top:.75rem">
+      <button class="btn-primary" id="run-search">Run search</button>
+      <button class="btn-ghost" id="clear-results">Clear</button>
+      <span class="status" id="search-status"></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Results <span class="chip" id="result-count">0</span></h2>
+    <ul class="results" id="results"></ul>
+  </div>
+
+  <div class="panel">
+    <h2>Elasticsearch</h2>
+    <div class="grid">
+      <div><label>Endpoint URL</label><input id="es-url" placeholder="https://host:9200"></div>
+      <div><label>Index</label><input id="es-index" placeholder="fishingnet"></div>
+      <div><label>API key / Bearer token</label><input id="es-key" type="password" placeholder="..."></div>
+      <div><label>Mode</label><select id="es-mode"><option value="search">Search</option><option value="ingest">Ingest results</option></select></div>
+    </div>
+    <label>Query DSL (JSON)</label>
+    <textarea id="es-query" placeholder='{"query":{"match":{"title":"keywords"}},"size":20}'></textarea>
+    <div class="row" style="margin-top:.75rem">
+      <button class="btn-primary" id="es-run">Run</button>
+      <span class="status" id="es-status"></span>
+    </div>
+    <pre id="es-out"></pre>
+  </div>
+</div>
+<script src="fishingnet.js" defer></script>
+</body>
+</html>
