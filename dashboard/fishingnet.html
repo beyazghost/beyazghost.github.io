@@ -49,6 +49,7 @@ pre{background:#0b0f14;padding:.75rem;border-radius:8px;overflow:auto;font-size:
       <div><label>Tavily API key</label><input id="key-tavily" type="password" placeholder="tvly-..."></div>
       <div><label>Exa API key</label><input id="key-exa" type="password" placeholder="..."></div>
       <div><label>Serper (Google) API key</label><input id="key-serper" type="password" placeholder="..."></div>
+      <div><label>Perplexity API key</label><input id="key-perplexity" type="password" placeholder="pplx-..."></div>
     </div>
     <div class="row" style="margin-top:.75rem">
       <button class="btn-primary" id="save-keys">Save keys</button>
@@ -67,6 +68,7 @@ pre{background:#0b0f14;padding:.75rem;border-radius:8px;overflow:auto;font-size:
           <label class="chip"><input type="checkbox" value="tavily" checked> Tavily</label>
           <label class="chip"><input type="checkbox" value="exa" checked> Exa</label>
           <label class="chip"><input type="checkbox" value="serper"> Serper</label>
+          <label class="chip"><input type="checkbox" value="perplexity"> Perplexity</label>
           <label class="chip"><input type="checkbox" value="ddg" checked> DuckDuckGo</label>
         </div>
       </div>
@@ -85,6 +87,21 @@ pre{background:#0b0f14;padding:.75rem;border-radius:8px;overflow:auto;font-size:
     </div>
   </div>
 
+
+  <div class="panel">
+    <h2>Recurring search (every couple hours)</h2>
+    <div class="grid">
+      <div><label>Interval (hours)</label><input id="rec-hours" type="number" value="2" min="1" max="24"></div>
+      <div><label>Status</label><p class="status" id="rec-status">stopped</p></div>
+    </div>
+    <div class="row" style="margin-top:.75rem">
+      <button class="btn-primary" id="rec-start">Start recurring</button>
+      <button class="btn-ghost" id="rec-stop">Stop</button>
+      <a class="btn-ghost" href="fishingnet-results.html" style="text-decoration:none;display:inline-block">View results history &rarr;</a>
+      <span class="status" id="rec-msg"></span>
+    </div>
+    <p class="status">Runs while this tab is open; results accumulate in local history (IndexedDB). For 24/7 server-side scheduling, deploy a Worker cron separately.</p>
+  </div>
   <div class="panel">
     <h2>Results <span class="chip" id="result-count">0</span></h2>
     <ul class="results" id="results"></ul>

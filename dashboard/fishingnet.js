@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const KEYS = ["brave","tavily","exa","serper"];
+const KEYS = ["brave","tavily","exa","serper","perplexity"];
 const LS = (k) => localStorage.getItem("fn_"+k);
 
 function saveKeys() {
@@ -98,7 +98,21 @@ function buildQuery(p) {
   return q;
 }
 
-const ADAPTERS = { brave:searchBrave, tavily:searchTavily, exa:searchExa, serper:searchSerper, ddg:searchDDG };
+async function searchPerplexity(p) {
+  const key = LS("perplexity"); if (!key) throw new Error("no perplexity key");
+  const res = await fetch("https://api.perplexity.ai/chat/completions", {
+    method:"POST", headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},
+    body: JSON.stringify({ model:"sonar", messages:[{role:"user",content:"Search the web for: "+buildQuery(p)+". Return a JSON array of results with title,url,snippet."}], temperature:0.2 })
+  });
+  if (!res.ok) throw new Error("perplexity "+res.status);
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content || "";
+  // best-effort parse
+  let arr = [];
+  try { const m = text.match(/\[[\s\S]*\]/); if (m) arr = JSON.parse(m[0]); } catch {}
+  return arr.slice(0,p.limit).map(x=>({title:x.title||x.url,url:x.url,snippet:x.snippet||"",source:"perplexity"}));
+}
+const ADAPTERS = { brave:searchBrave, tavily:searchTavily, exa:searchExa, serper:searchSerper, perplexity:searchPerplexity, ddg:searchDDG };
 
 $("run-search").addEventListener("click", async () => {
   const p = params();
@@ -120,6 +134,7 @@ $("run-search").addEventListener("click", async () => {
   results.length = 0; results.push(...dedup);
   renderResults();
   $("search-status").textContent = `done · ${results.length} unique results`;
+  recordRun(p, [...results]);
 });
 $("clear-results").addEventListener("click", () => { results.length=0; renderResults(); $("search-status").textContent=""; });
 
@@ -153,3 +168,54 @@ $("es-run").addEventListener("click", async () => {
     $("es-status").textContent = "error: "+e.message;
   }
 });
+
+
+// History storage (localStorage, capped)
+const HIST_KEY = "fn_history";
+function loadHistory(){ try { return JSON.parse(localStorage.getItem(HIST_KEY)||"[]"); } catch { return []; } }
+function saveHistory(h){ localStorage.setItem(HIST_KEY, JSON.stringify(h.slice(-200))); }
+function recordRun(p, res) {
+  const h = loadHistory();
+  h.push({ ts: new Date().toISOString(), query: p.q, params: p, count: res.length, results: res });
+  saveHistory(h);
+}
+
+// Recurring
+let recTimer = null;
+function startRecurring() {
+  const hours = Number($("rec-hours").value)||2;
+  const ms = hours*3600*1000;
+  if (recTimer) clearInterval(recTimer);
+  const run = async () => {
+    const p = params();
+    if (!p.q) return;
+    $("rec-status").textContent = "running...";
+    const batch = [];
+    for (const prov of p.providers) {
+      try { const r = await ADAPTERS[prov](p); r.forEach(x=>batch.push(x)); } catch(e){ $("rec-msg").textContent = prov+": "+e.message; }
+    }
+    // dedup
+    const seen=new Set(); const dedup=[]; batch.forEach(r=>{ if(seen.has(r.url))return; seen.add(r.url); dedup.push(r);});
+    dedup.forEach(r=>results.push(r));
+    renderResults();
+    recordRun(p, dedup);
+    $("rec-status").textContent = "last run "+new Date().toLocaleTimeString();
+    $("rec-msg").textContent = `+${dedup.length} results`;
+  };
+  run();
+  recTimer = setInterval(run, ms);
+  $("rec-status").textContent = "running every "+hours+"h";
+  $("rec-msg").textContent = "started";
+}
+function stopRecurring() {
+  if (recTimer) { clearInterval(recTimer); recTimer=null; }
+  $("rec-status").textContent = "stopped";
+  $("rec-msg").textContent = "";
+}
+$("rec-start").addEventListener("click", startRecurring);
+$("rec-stop").addEventListener("click", stopRecurring);
+
+// Record manual runs too: wrap run-search handler? Instead record after manual search by hooking.
+const _origRender = renderResults;
+// hook: after run-search completes, record. We'll monkeypatch by adding recordRun in the run-search listener already defined above; re-open not possible. Instead add a delegated capture:
+document.addEventListener("fn:run", (e)=> recordRun(e.detail.p, e.detail.res));

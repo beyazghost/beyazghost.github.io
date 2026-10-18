@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Net — Results History</title>
+<style>
+:root { --bg:#0d1117; --panel:#111827; --border:rgba(255,255,255,0.08); --muted:#b5bfce; --text:#edf2f7; --accent:#f8c033; }
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+body{padding:2rem 1rem}
+.wrap{max-width:1200px;margin:0 auto}
+h1,h2,p{margin-top:0}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:.75rem}
+.panel{background:rgba(17,24,39,.95);border:1px solid var(--border);border-radius:16px;padding:1.25rem;margin-bottom:1.25rem}
+.run{border-bottom:1px solid var(--border);padding:.75rem 0}
+.run h3{margin:0 0 .25rem;font-size:1rem}
+.run .meta{color:var(--muted);font-size:.8rem;margin-bottom:.5rem}
+.run ul{list-style:none;padding:0;margin:0}
+.run li{padding:.35rem 0;border-top:1px solid rgba(255,255,255,.04)}
+.run a{color:var(--accent);text-decoration:none}
+.btn{cursor:pointer;border:none;border-radius:10px;padding:.5rem .9rem;font-weight:700;font-size:.85rem;background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Backend tool</p>
+  <h1>Fishing Net — Results History</h1>
+  <p style="color:var(--muted)">Accumulated runs from recurring + manual searches (stored locally in this browser).</p>
+  <div class="row" style="margin-bottom:1rem;display:flex;gap:.5rem">
+    <button class="btn" id="refresh">Refresh</button>
+    <button class="btn" id="export">Export JSON</button>
+    <button class="btn" id="clear">Clear history</button>
+    <a class="btn" href="fishingnet.html" style="text-decoration:none;display:inline-block">Back to search</a>
+  </div>
+  <div id="out"></div>
+</div>
+<script>
+const HIST_KEY="fn_history";
+function load(){ try{return JSON.parse(localStorage.getItem(HIST_KEY)||"[]");}catch{return [];} }
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(){
+  const h=load();
+  const out=document.getElementById("out");
+  if(!h.length){ out.innerHTML="<p style='color:var(--muted)'>No runs yet.</p>"; return; }
+  out.innerHTML = h.slice().reverse().map(run=>`
+    <div class="run">
+      <h3>${esc(run.query)}</h3>
+      <div class="meta">${run.ts} · ${run.count} results</div>
+      <ul>${(run.results||[]).map(r=>`<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title||r.url)}</a> <span style="color:var(--muted);font-size:.75rem">(${esc(r.source)})</span></li>`).join("")}</ul>
+    </div>`).join("");
+}
+document.getElementById("refresh").addEventListener("click", render);
+document.getElementById("clear").addEventListener("click", ()=>{ localStorage.removeItem(HIST_KEY); render(); });
+document.getElementById("export").addEventListener("click", ()=>{
+  const blob=new Blob([JSON.stringify(load(),null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="fishingnet-history.json"; a.click();
+});
+render();
+</script>
+</body>
+</html>
