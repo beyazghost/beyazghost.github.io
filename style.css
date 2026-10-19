@@ -1161,3 +1161,62 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 @media (max-width: 30rem) {
   .checkout-options { flex-direction: column; }
 }
+
+/* ---------- Order details ---------- */
+.order-details {
+  border-top: 1px solid var(--hair);
+  padding-top: 2rem;
+}
+.details-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+.detail-card {
+  border: 1px solid var(--hair);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--paper);
+}
+.detail-card h4 {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.detail-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ---------- Checkout status ---------- */
+.checkout-status {
+  margin-top: 1rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* ---------- Archive / integrity ---------- */
+.archive-section {
+  border-top: 1px solid var(--hair);
+  padding-top: 2rem;
+}
+.archive-section h2 {
+  font-size: 1.25rem;
+}
+.archive-section p {
+  max-width: 44rem;
+}
+
+/* ---------- Reader form status colors ---------- */
+:root {
+  --ok: #2bc46c;
+  --danger: #ff7b7b;
+}
