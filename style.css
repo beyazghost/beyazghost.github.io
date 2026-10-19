@@ -946,3 +946,13 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase;
   color: rgba(251,250,247,0.55); position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
 }
+
+/* ---------- Multidimensional reading experience section ---------- */
+.multidimensional { border-top: 1px solid var(--hair); padding-top: 2.5rem; }
+.multidimensional h2 { font-family: var(--sans); font-size: 1.25rem; margin: 0 0 0.5rem; color: var(--ink); }
+.multidimensional-lead { font-family: var(--sans); font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 800; margin: 0 0 1rem; display: block; }
+.multidimensional p { margin: 0 0 1.25rem; }
+.multidimensional-features { list-style: none; padding: 0; margin: 0; }
+.multidimensional-features li { margin: 0 0 0.85rem; padding-left: 1.6rem; position: relative; line-height: 1.5; }
+.multidimensional-features li::before { content: "\2713"; position: absolute; left: 0; top: 0.05rem; color: var(--accent); font-family: var(--sans); font-weight: 800; }
+.multidimensional-features li strong { color: var(--ink); }
