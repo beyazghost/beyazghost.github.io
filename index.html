@@ -427,7 +427,7 @@
     .then(async (r) => {
       if (!r.ok) throw new Error("status unavailable");
       const d = await r.json();
-      if (d.status === "ok") { set("ok", "Checked in within the last " + d.window_hours + " hours"); const ex = document.createElement("div"); ex.className = "status-update"; ex.textContent = "Status Update = Requesting Exfil, por favor."; el.appendChild(ex); }
+      if (d.status === "ok") set("ok", "Checked in within the last " + d.window_hours + " hours");
       else if (d.status === "overdue") set("overdue", "Missed check-in: no check-in for over " + d.window_hours + " hours. See the Safety Protocol below.");
       else set("unknown", "Check-in status unavailable");
     })
