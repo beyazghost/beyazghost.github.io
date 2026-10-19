@@ -10,6 +10,7 @@ export interface Env {
   CLOUDFLARE_PAGES_PROJECT?: string;
   COMMENTS_API_URL?: string;
   GITHUB_REPO?: string;
+  CF_WA_SITE_TAG?: string;
 }
 
 type StatusRecord = {
@@ -479,6 +480,52 @@ const getAnalyticsSummary = async (env: Env) => {
   return { days, total: days.reduce((a, b) => a + b.total, 0) };
 };
 
+
+const getWebAnalytics = async (env: Env) => {
+  const siteTag = env.CF_WA_SITE_TAG;
+  const token = env.CLOUDFLARE_API_TOKEN;
+  const accountId = env.CLOUDFLARE_ACCOUNT_ID || "d2a246f376937c8a6d58d1f75925ac4b";
+  if (!siteTag || !token) {
+    return { configured: false, days: [], countries: [], encrypted: 0, total: 0, message: "Cloudflare Web Analytics site tag not configured." };
+  }
+  const since = new Date(); since.setDate(since.getDate() - 7);
+  const until = new Date();
+  const query = `{ viewer { accounts(filter: {accountTag: "${accountId}"}) { rumPageloadEventsAdaptiveGroups(limit: 10000, filter: {siteTag: "${siteTag}", date_geq: "${since.toISOString().slice(0,10)}", date_leq: "${until.toISOString().slice(0,10)}"}) { count dimensions { date countryName requestScheme } } } } }`;
+  try {
+    const res = await fetch("https://api.cloudflare.com/client/v4/graphql", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    if (!res.ok) return { configured: true, error: "HTTP " + res.status, days: [], countries: [], encrypted: 0, total: 0 };
+    const data = await res.json() as any;
+    const groups = data?.data?.viewer?.accounts?.[0]?.rumPageloadEventsAdaptiveGroups || [];
+    const byDay = new Map<string, number>();
+    const byCountry = new Map<string, number>();
+    let encrypted = 0; let total = 0;
+    for (const g of groups) {
+      const c = g.count || 0;
+      const d = g.dimensions?.date;
+      if (d) byDay.set(d, (byDay.get(d) || 0) + c);
+      const country = g.dimensions?.countryName || "Unknown";
+      byCountry.set(country, (byCountry.get(country) || 0) + c);
+      if ((g.dimensions?.requestScheme || "").toLowerCase() === "https") encrypted += c;
+      total += c;
+    }
+    const days: Array<{ date: string; total: number }> = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i -= 1) {
+      const date = new Date(today); date.setHours(0,0,0,0); date.setDate(today.getDate() - i);
+      const key = date.toISOString().slice(0,10);
+      days.push({ date: key, total: byDay.get(key) || 0 });
+    }
+    const countries = Array.from(byCountry.entries()).map(([name,total])=>({name,total})).sort((a,b)=>b.total-a.total).slice(0,15);
+    return { configured: true, days, countries, encrypted, total };
+  } catch (e) {
+    return { configured: true, error: String(e), days: [], countries: [], encrypted: 0, total: 0 };
+  }
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -608,6 +655,7 @@ export default {
       ]);
 
       const analytics = await getAnalyticsSummary(env);
+      const webAnalytics = await getWebAnalytics(env);
       return json({
         ok: true,
         timestamp: new Date().toISOString(),
@@ -615,6 +663,7 @@ export default {
         welfare,
         comments,
         analytics,
+        webAnalytics,
         history: buildHistoryFromEntries(
           welfare.entries,
           comments.entries,

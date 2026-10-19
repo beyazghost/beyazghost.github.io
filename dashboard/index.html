@@ -181,6 +181,13 @@
         <svg id="activity-chart" viewBox="0 0 520 180" width="100%" height="180" role="img" aria-label="Seven day activity graph"></svg>
       </section>
 
+      <section class="card" aria-label="Cloudflare Web Analytics">
+        <h3>Cloudflare Web Analytics</h3>
+        <div id="wa-status" class="muted">checking…</div>
+        <div id="wa-summary"></div>
+        <div id="wa-countries"></div>
+      </section>
+
       <div class="stack">
         <section class="card">
           <h3>Latest welfare submissions</h3>
@@ -214,6 +221,9 @@
     const welfareList = document.getElementById("welfare-list");
     const commentList = document.getElementById("comment-list");
     const activityChart = document.getElementById("activity-chart");
+    const waStatus = document.getElementById("wa-status");
+    const waSummary = document.getElementById("wa-summary");
+    const waCountries = document.getElementById("wa-countries");
 
     function buildActivityChart(history) {
       const points = Array.isArray(history) && history.length ? history : [
@@ -370,6 +380,18 @@
         welfareTotal.textContent = String(totalWelfare);
         commentTotal.textContent = String(totalComments);
         viewsTotal.textContent = String(analytics.total || 0);
+        const wa = data.webAnalytics || {};
+        if (!wa.configured) {
+          waStatus.textContent = wa.message || "Not configured. Enable Web Analytics in the Cloudflare dashboard and set CF_WA_SITE_TAG.";
+          waSummary.innerHTML = "";
+          waCountries.innerHTML = "";
+        } else if (wa.error) {
+          waStatus.textContent = "Error: " + wa.error;
+        } else {
+          waStatus.textContent = "Configured · " + (wa.total || 0) + " page views (7d) · " + (wa.encrypted || 0) + " encrypted (https)";
+          waSummary.innerHTML = "";
+          waCountries.innerHTML = (wa.countries || []).map(c => `<div class="item"><strong>${escapeHtml(c.name)}</strong> <span class="meta">${c.total}</span></div>`).join("") || "<div class=\"muted\">No country data yet.</div>";
+        }
         const activityPoints = analytics.days && analytics.days.length
           ? analytics.days.map((d) => ({ label: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }), total: Number(d.total || 0) }))
           : (history.length ? history.map((entry) => ({ label: entry.label || entry.date, total: Number(entry.total || 0) })) : []);
