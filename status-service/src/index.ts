@@ -482,11 +482,27 @@ const getAnalyticsSummary = async (env: Env) => {
 
 
 const getWebAnalytics = async (env: Env) => {
-  const siteTag = env.CF_WA_SITE_TAG;
   const token = env.CLOUDFLARE_API_TOKEN;
   const accountId = env.CLOUDFLARE_ACCOUNT_ID || "d2a246f376937c8a6d58d1f75925ac4b";
-  if (!siteTag || !token) {
-    return { configured: false, days: [], countries: [], encrypted: 0, total: 0, message: "Cloudflare Web Analytics site tag not configured." };
+  const projectName = env.CLOUDFLARE_PAGES_PROJECT || "spbzorro";
+  if (!token) {
+    return { configured: false, days: [], countries: [], encrypted: 0, total: 0, message: "Cloudflare API token not configured." };
+  }
+  // Discover Web Analytics site tag from the Pages project (if enabled in dashboard).
+  let siteTag = env.CF_WA_SITE_TAG || null;
+  if (!siteTag) {
+    try {
+      const projRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${projectName}`, {
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+      if (projRes.ok) {
+        const projData = await projRes.json() as any;
+        siteTag = projData?.result?.build_config?.web_analytics_tag || null;
+      }
+    } catch {}
+  }
+  if (!siteTag) {
+    return { configured: false, days: [], countries: [], encrypted: 0, total: 0, message: "Web Analytics not enabled on the Pages project. Enable it in the Cloudflare dashboard (Pages project → Settings → Web Analytics) so a site tag is generated." };
   }
   const since = new Date(); since.setDate(since.getDate() - 7);
   const until = new Date();
