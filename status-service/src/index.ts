@@ -450,6 +450,35 @@ const requireWordCheck = async (body: { safe_word?: string; duress_word?: string
   return safeWord === "bubbaissafe" || duressWord === "bubba";
 };
 
+
+const analyticsKey = (date: string) => `analytics:${date}`;
+
+const recordAnalyticsHit = async (env: Env) => {
+  if (!env.STATUS_KV) return;
+  const key = analyticsKey(new Date().toISOString().slice(0, 10));
+  const raw = await env.STATUS_KV.get(key);
+  const count = (raw ? parseInt(raw, 10) : 0) + 1;
+  await env.STATUS_KV.put(key, String(count));
+};
+
+const getAnalyticsSummary = async (env: Env) => {
+  const days: Array<{ date: string; total: number }> = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i -= 1) {
+    const date = new Date(today);
+    date.setHours(0, 0, 0, 0);
+    date.setDate(today.getDate() - i);
+    const key = date.toISOString().slice(0, 10);
+    let total = 0;
+    if (env.STATUS_KV) {
+      const raw = await env.STATUS_KV.get(analyticsKey(key));
+      total = raw ? (parseInt(raw, 10) || 0) : 0;
+    }
+    days.push({ date: key, total });
+  }
+  return { days, total: days.reduce((a, b) => a + b.total, 0) };
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -578,18 +607,32 @@ export default {
         getCloudflareDeploymentHistory(env),
       ]);
 
+      const analytics = await getAnalyticsSummary(env);
       return json({
         ok: true,
         timestamp: new Date().toISOString(),
         cloudflare,
         welfare,
         comments,
+        analytics,
         history: buildHistoryFromEntries(
           welfare.entries,
           comments.entries,
           deploymentHistory,
         ),
       }, env, { status: 200 });
+    }
+
+
+    if (url.pathname === "/analytics/hit") {
+      if (request.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(env) });
+      await recordAnalyticsHit(env);
+      return json({ ok: true }, env, { status: 202 });
+    }
+
+    if (url.pathname === "/analytics/summary") {
+      const summary = await getAnalyticsSummary(env);
+      return json({ ok: true, ...summary }, env);
     }
 
     return json({ error: "Not found" }, env, { status: 404 });

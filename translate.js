@@ -26,3 +26,15 @@
     location.href = url;
   });
 })();
+
+// First-party page-view beacon for the dashboard analytics.
+(function () {
+  try {
+    var API = window.JOURNO_STATUS_API || "https://journo-status-service.journo-sentinel.workers.dev";
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(API + "/analytics/hit");
+    } else {
+      fetch(API + "/analytics/hit", { method: "POST", keepalive: true }).catch(function () {});
+    }
+  } catch (e) {}
+})();

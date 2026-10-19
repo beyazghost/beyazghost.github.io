@@ -169,6 +169,11 @@
           <div id="comment-total" class="big">0</div>
           <div class="muted">across the public speak threads</div>
         </article>
+        <article class="card">
+          <h3>Page views (7d)</h3>
+          <div id="views-total" class="big">0</div>
+          <div class="muted">first-party beacon hits</div>
+        </article>
       </div>
 
       <section class="card" aria-label="Website activity graph">
@@ -205,6 +210,7 @@
     const projectStatus = document.getElementById("project-status");
     const welfareTotal = document.getElementById("welfare-total");
     const commentTotal = document.getElementById("comment-total");
+    const viewsTotal = document.getElementById("views-total");
     const welfareList = document.getElementById("welfare-list");
     const commentList = document.getElementById("comment-list");
     const activityChart = document.getElementById("activity-chart");
@@ -359,10 +365,15 @@
 
         const totalWelfare = welfare.total || 0;
         const totalComments = comments.total || 0;
+        const analytics = data.analytics || { days: [], total: 0 };
 
         welfareTotal.textContent = String(totalWelfare);
         commentTotal.textContent = String(totalComments);
-        buildActivityChart(history.length ? history.map((entry) => ({ label: entry.label || entry.date, total: Number(entry.total || 0) })) : []);
+        viewsTotal.textContent = String(analytics.total || 0);
+        const activityPoints = analytics.days && analytics.days.length
+          ? analytics.days.map((d) => ({ label: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }), total: Number(d.total || 0) }))
+          : (history.length ? history.map((entry) => ({ label: entry.label || entry.date, total: Number(entry.total || 0) })) : []);
+        buildActivityChart(activityPoints);
 
         welfareList.innerHTML = welfare.entries?.length
           ? welfare.entries.slice(0, 10).map(formatSubmission).join("")
