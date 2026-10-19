@@ -1072,3 +1072,16 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 /* Author card */
 .author-card h2 { font-size: 1.45rem; }
 .author-bio p { margin: 0 0 1rem; max-width: 44rem; }
+
+/* ---------- Cover design full-width section ---------- */
+.cover-design-full {
+  margin: 2rem 0; position: relative;
+}
+.cover-design-full img {
+  border-radius: 1rem; box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+}
+.cover-direction-copy {
+  margin-top: 1.5rem; max-width: 42rem;
+}
+.cover-direction-copy p { margin: 0 0 1rem; line-height: 1.6; }
+.cover-direction-copy .cover-lead { font-family: var(--sans); font-size: 0.9rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 800; margin: 0 0 0.75rem; display: block; }
