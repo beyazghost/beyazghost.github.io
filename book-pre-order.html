@@ -256,6 +256,64 @@
     </p>
   </section>
 
+  <!-- CHECKOUT -->
+  <section class="book-section checkout-section">
+    <p class="section-kicker">Checkout</p>
+    <h2>Pre-order Checkout</h2>
+    <p class="section-deck">Fill in your details. The total calculates automatically &mdash; enter that amount when you pay.</p>
+
+    <div class="checkout-options">
+      <button type="button" class="checkout-option active" data-type="individual" onclick="setCheckoutType('individual')">
+        Individual &mdash; $26.00 each
+      </button>
+      <button type="button" class="checkout-option" data-type="wholesale" onclick="setCheckoutType('wholesale')">
+        Stores &amp; Publishers &mdash; $14.44 each
+      </button>
+    </div>
+
+    <form class="checkout-form" id="checkout-form" onsubmit="return handleCheckoutSubmit(event)">
+      <div class="checkout-fields">
+        <label for="checkout-name">Name or Company <span class="required">*</span></label>
+        <input type="text" id="checkout-name" name="name" placeholder="Who is this book for?" required>
+
+        <label for="checkout-address">Address <span class="required">*</span></label>
+        <textarea id="checkout-address" name="address" rows="3" placeholder="Street, City, State, ZIP, Country" required></textarea>
+
+        <label for="checkout-email">Email for confirmation <span class="required">*</span></label>
+        <input type="email" id="checkout-email" name="email" placeholder="you@example.com" required>
+
+        <label for="checkout-note">Short note (optional)</label>
+        <textarea id="checkout-note" name="note" rows="2" placeholder="A message for Sean &hellip;"></textarea>
+      </div>
+
+      <div class="checkout-quantity">
+        <label for="checkout-qty">Quantity <span class="required">*</span></label>
+        <select id="checkout-qty" name="quantity" onchange="updateCheckoutTotal()"></select>
+      </div>
+
+      <div class="checkout-price-row">
+        <label>Price per book</label>
+        <span id="checkout-unit-price">$26.00</span>
+      </div>
+
+      <div class="checkout-total-row">
+        <label>Total</label>
+        <input type="text" id="checkout-total" readonly value="$26.00" class="checkout-total-input">
+        <p class="total-note">Enter this amount in your Cash App or Lightning payment.</p>
+      </div>
+
+      <button type="submit" class="checkout-pay-btn">
+        I&rsquo;ve Paid &mdash; Confirm My Order &rarr;
+      </button>
+    </form>
+
+    <p class="checkout-signal-note">
+      After you pay, drop a short note on
+      <a href="https://signal.me/#eu/B8AFcaPTKSmwpHCIIpBN0CYEx58ozfQWvRJ6f4cBVnRXazmHA81IPpCYckj-EjwT" target="_blank" rel="noopener">Signal</a>
+      with your name and order details so I can confirm your pre-order and thank you.
+    </p>
+  </section>
+
   <hr class="section-divider">
 
   <!-- EMAIL CAPTURE -->
@@ -311,7 +369,6 @@
 
 <script src="translate.js" defer></script>
 <script src="comments.js" defer></script>
-<script>
 function joinReaderList(event) {
   event.preventDefault();
   var input = event.target.querySelector('input[name="email"]');
@@ -320,6 +377,71 @@ function joinReaderList(event) {
   note.style.color = 'var(--accent)';
   note.textContent = 'Thanks &mdash; you&rsquo;re on the reader list. You&rsquo;ll hear about the release and your pre-order.';
   input.value = '';
+  return false;
+}
+
+// ---------- Checkout logic ----------
+var checkoutType = 'individual'; // 'individual' | 'wholesale'
+var unitPrices = { individual: 26.00, wholesale: 14.44 };
+var qtyOptions = {
+  individual: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  wholesale: [10, 50, 100]
+};
+
+function setCheckoutType(type) {
+  checkoutType = type;
+  var btns = document.querySelectorAll('.checkout-option');
+  btns.forEach(function (b) {
+    if (b.dataset.type === type) {
+      b.classList.add('active');
+      b.style.background = 'var(--accent)';
+      b.style.color = 'var(--ink)';
+    } else {
+      b.classList.remove('active');
+      b.style.background = 'transparent';
+      b.style.color = 'var(--ink)';
+    }
+  });
+  populateQuantities();
+  updateCheckoutTotal();
+}
+
+function populateQuantities() {
+  var select = document.getElementById('checkout-qty');
+  select.innerHTML = '';
+  qtyOptions[checkoutType].forEach(function (q) {
+    var opt = document.createElement('option');
+    opt.value = q;
+    opt.textContent = q + (q === 1 ? ' book' : ' books');
+    select.appendChild(opt);
+  });
+  // preselect first option
+  if (select.options.length > 0) select.selectedIndex = 0;
+}
+
+function updateCheckoutTotal() {
+  var select = document.getElementById('checkout-qty');
+  var qty = parseInt(select.value, 10) || 1;
+  var unit = unitPrices[checkoutType];
+  var total = unit * qty;
+  document.getElementById('checkout-unit-price').textContent = '$' + unit.toFixed(2);
+  document.getElementById('checkout-total').value = '$' + total.toFixed(2);
+}
+
+function handleCheckoutSubmit(event) {
+  event.preventDefault();
+  var name = document.getElementById('checkout-name').value;
+  var address = document.getElementById('checkout-address').value;
+  var email = document.getElementById('checkout-email').value;
+  var note = document.getElementById('checkout-note').value;
+  var qty = document.getElementById('checkout-qty').value;
+  var total = document.getElementById('checkout-total').value;
+
+  // Build a mailto-style confirmation (no backend; user copies details to Signal)
+  var summary = 'New pre-order: ' + name + '\\nAddress: ' + address + '\\nEmail: ' + email + '\\nQty: ' + qty + '\\nTotal: ' + total;
+  if (note) summary += '\\nNote: ' + note;
+
+  alert('Order ready:\\n\\n' + summary + '\\n\\nPlease send ' + total + ' via Cash App / Lightning at coinos.io/spbzorro, then message me on Signal to confirm.');
   return false;
 }
 </script>
