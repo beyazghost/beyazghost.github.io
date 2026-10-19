@@ -956,3 +956,119 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 .multidimensional-features li { margin: 0 0 0.85rem; padding-left: 1.6rem; position: relative; line-height: 1.5; }
 .multidimensional-features li::before { content: "\2713"; position: absolute; left: 0; top: 0.05rem; color: var(--accent); font-family: var(--sans); font-weight: 800; }
 .multidimensional-features li strong { color: var(--ink); }
+
+/* ---------- Book page typography & readability ---------- */
+.book-page { line-height: 1.65; }
+
+/* Section kicker: small-caps label above each title */
+.book-section .section-kicker {
+  font-family: var(--sans); font-size: 0.75rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--accent); font-weight: 800;
+  margin: 0 0 0.4rem; display: block;
+}
+
+/* Section title hierarchy - each section gets its own treatment */
+.book-section h2 {
+  font-family: var(--sans); font-size: 1.35rem; font-weight: 800;
+  color: var(--ink); margin: 0 0 0.5rem; letter-spacing: -0.01em;
+}
+
+/* Subtitle / deck under a title */
+.book-section .section-deck {
+  font-family: var(--sans); font-size: 0.95rem; font-weight: 400;
+  color: var(--muted); margin: 0 0 1.5rem; line-height: 1.5;
+  max-width: 46rem;
+}
+
+/* Indented standout block for key statements */
+.book-section .standout {
+  margin: 1.5rem 0; padding: 1rem 1.25rem 1rem 1.5rem;
+  border-left: 4px solid var(--accent);
+  background: rgba(143,98,18,0.05); border-radius: 0 0.5rem 0.5rem 0;
+}
+.book-section .standout p { margin: 0; color: var(--ink); font-size: 1.05rem; }
+
+/* Pull quote */
+.book-section .pull-quote {
+  margin: 1.75rem 0; font-family: var(--sans); font-size: 1.15rem;
+  font-style: italic; color: var(--ink);
+  border-left: 2px solid var(--hair); padding-left: 1.25rem;
+}
+.book-section .pull-quote p { margin: 0; }
+
+/* Body paragraphs in book sections: generous leading, readable measure */
+.book-section p { margin: 0 0 1.15rem; max-width: 44rem; }
+
+/* Hero title treatment */
+.book-hero h2 {
+  font-family: var(--sans); font-size: clamp(1.9rem, 5vw, 3rem);
+  font-weight: 900; color: var(--ink); line-height: 1.15;
+  margin: 0 0 0.75rem; letter-spacing: -0.02em;
+}
+.book-hero .series-badge {
+  font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); font-weight: 800;
+  margin: 0 0 0.75rem; display: block;
+}
+.book-hero .tagline { font-family: var(--sans); font-size: 0.95rem;
+  color: var(--muted); margin: 0 0 1rem; font-style: normal; }
+.book-hero p { margin: 0 0 1rem; max-width: 34rem; line-height: 1.55; }
+
+/* Price block hierarchy */
+.price-block { margin: 1rem 0 1.25rem; }
+.price { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 800;
+  color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+.price-note { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); }
+
+/* Incentive callout */
+.incentive {
+  margin-top: 1rem; padding: 0.85rem 1rem; border-radius: 0.5rem;
+  background: rgba(143,98,18,0.07); border: 1px solid rgba(143,98,18,0.2);
+  font-family: var(--sans); font-size: 0.9rem; color: var(--ink);
+}
+.incentive strong { color: var(--accent); }
+
+/* Trilogy section titles */
+.trilogy-copy h2 { font-size: 1.6rem; }
+.trilogy-copy h3 { font-family: var(--sans); font-size: 1rem; font-weight: 700;
+  color: var(--accent); margin: 0 0 0.25rem; text-transform: uppercase;
+  letter-spacing: 0.14em; }
+.series-item strong { color: var(--ink); font-size: 1.05rem; }
+
+/* App-copy / experience section standout */
+.app-copy .standout { border-left-color: var(--ink); background: rgba(0,0,0,0.03); }
+
+/* Section dividers for rhythm */
+.book-section + .book-section { border-top: none; }
+.book-section .section-divider {
+  margin: 2.5rem 0; height: 1px; background: var(--hair); border: none;
+}
+
+/* Specific section emphasis classes */
+.book-section.multidimensional h2 { font-size: 1.45rem; color: var(--ink); }
+.book-section.journey h2 { font-size: 1.5rem; }
+.book-section.reader-form h2 { font-size: 1.35rem; }
+.book-section.payment-methods h2 { font-size: 1.35rem; }
+.book-section.faq h2 { font-size: 1.3rem; }
+.book-section.author-card h2 { font-size: 1.4rem; }
+.book-section.synopsis h2 { font-size: 1.5rem; }
+.book-section.cover-concept-section h2 { font-size: 1.5rem; }
+
+/* FAQ item styling for scannability */
+.faq-item summary {
+  font-family: var(--sans); font-size: 0.95rem; font-weight: 700;
+  color: var(--ink); cursor: pointer; padding: 0.75rem 0; list-style: none;
+  border-left: 3px solid transparent; padding-left: 0.75rem;
+}
+.faq-item summary:hover { color: var(--accent); border-left-color: var(--accent); }
+.faq-item p { margin: 0.5rem 0 0 0.75rem; font-size: 0.9rem; color: var(--muted); }
+
+/* Series item typography */
+.series-item.current strong { font-size: 1.1rem; }
+.series-item.current span { color: var(--ink); font-weight: 600; }
+.series-item.upcoming strong { color: var(--muted); font-weight: 600; }
+.series-item.upcoming span { color: #9b978e; }
+
+/* Author card */
+.author-card h2 { font-size: 1.45rem; }
+.author-bio p { margin: 0 0 1rem; max-width: 44rem; }
