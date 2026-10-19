@@ -9,6 +9,7 @@ export interface Env {
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_PAGES_PROJECT?: string;
   COMMENTS_API_URL?: string;
+  GITHUB_REPO?: string;
 }
 
 type StatusRecord = {
@@ -173,6 +174,16 @@ const discoverCloudflareAccountId = async (env: Env): Promise<string | null> => 
 const getCloudflareProjectStatus = async (env: Env) => {
   const token = env.CLOUDFLARE_API_TOKEN;
   const projectName = env.CLOUDFLARE_PAGES_PROJECT || "spbzorro";
+  if (!token) {
+    return {
+      configured: true,
+      ok: true,
+      source: "github",
+      project: projectName,
+      url: "https://spbzorro.pages.dev",
+      message: "Cloudflare credentials not configured; using GitHub commit history for activity.",
+    };
+  }
 
   if (!token || !projectName) {
     return {
@@ -235,7 +246,7 @@ const getCloudflareProjectStatus = async (env: Env) => {
 
 const getCloudflareDeploymentHistory = async (env: Env) => {
   const projectName = env.CLOUDFLARE_PAGES_PROJECT || "spbzorro";
-  if (!env.CLOUDFLARE_API_TOKEN) return [] as Array<{ timestamp: string; count: number }>;
+  if (!env.CLOUDFLARE_API_TOKEN) return await getGitHubCommitHistory(env);
 
   const accountId = await discoverCloudflareAccountId(env);
   if (!accountId) return [] as Array<{ timestamp: string; count: number }>;
@@ -272,6 +283,37 @@ const getCloudflareDeploymentHistory = async (env: Env) => {
     history.push({ timestamp: key, count: buckets.get(key) || 0 });
   }
   return history;
+};
+
+const getGitHubCommitHistory = async (env: Env) => {
+  const repo = env.GITHUB_REPO || "beyazghost/beyazghost.github.io";
+  const since = new Date();
+  since.setDate(since.getDate() - 7);
+  const url = `https://api.github.com/repos/${repo}/commits?since=${since.toISOString()}&per_page=100`;
+  try {
+    const res = await fetch(url, { headers: { "Accept": "application/vnd.github+json", "User-Agent": "journo-status-service" } });
+    if (!res.ok) return [] as Array<{ timestamp: string; count: number }>;
+    const data = await res.json() as Array<{ commit?: { author?: { date?: string } } }>;
+    const buckets = new Map<string, number>();
+    for (const c of data || []) {
+      const d = c?.commit?.author?.date;
+      if (!d) continue;
+      const key = new Date(d).toISOString().slice(0, 10);
+      buckets.set(key, (buckets.get(key) || 0) + 1);
+    }
+    const history: Array<{ timestamp: string; count: number }> = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i -= 1) {
+      const date = new Date(today);
+      date.setHours(0, 0, 0, 0);
+      date.setDate(today.getDate() - i);
+      const key = date.toISOString().slice(0, 10);
+      history.push({ timestamp: key, count: buckets.get(key) || 0 });
+    }
+    return history;
+  } catch {
+    return [] as Array<{ timestamp: string; count: number }>;
+  }
 };
 
 const getWelfareEntries = async (env: Env) => {
@@ -339,7 +381,7 @@ const getCommentEntries = async (env: Env) => {
   const results: Array<{ body: string; created_at: string; thread: string }> = [];
   const commentResults = await Promise.allSettled([...threads].slice(0, 30).map(async (thread) => {
     const response = await fetch(`${apiUrl}/comments?thread=${encodeURIComponent(thread)}`);
-    if (!response.ok) return [] as Array<{ body: string; created_at: string }>;
+    if (!response.ok) return [] as Array<{ body: string; created_at: string; thread: string }>;
     const payload = await response.json() as { comments?: Array<{ body: string; created_at: string }> };
     return (payload.comments || []).map((comment) => ({ ...comment, thread }));
   }));
