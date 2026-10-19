@@ -1346,3 +1346,12 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   --ok: #2bc46c;
   --danger: #ff7b7b;
 }
+
+/* ---------- Reader thank-you page ---------- */
+.big-love {
+  margin-top: 1.5rem;
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  color: var(--ink);
+  font-style: italic;
+}

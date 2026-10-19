@@ -355,9 +355,7 @@ function joinReaderList(event) {
   .then(function (r) { return r.json(); })
   .then(function (data) {
     if (data.ok) {
-      note.style.color = "var(--ok)";
-      note.textContent = "You&rsquo;re on the reader list. You&rsquo;ll hear about the release and your pre-order.";
-      input.value = "";
+      window.location.href = "./reader-thankyou.html";
     } else {
       note.style.color = "var(--danger)";
       note.textContent = "Couldn&rsquo;t add you&mdash;please try again or message on Signal.";
