@@ -211,6 +211,23 @@ p { margin: 0 0 1em; }
 .checkin.overdue { color: var(--alert); font-weight: 600; }
 .checkin.overdue .dot { background: var(--alert); }
 
+.checkin.seanie-request {
+  color: var(--ink);
+  font-weight: 700;
+  border: 2px solid var(--accent);
+  border-radius: 0.6rem;
+  background: rgba(143, 98, 18, 0.06);
+  padding: 0.55rem 0.85rem;
+  box-shadow: 0 0 0 0 rgba(143, 98, 18, 0);
+  animation: seanie-pulse 2.2s ease-in-out infinite;
+}
+.checkin.seanie-request .dot { background: var(--accent); }
+
+@keyframes seanie-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(143, 98, 18, 0.45); }
+  50% { box-shadow: 0 0 0 6px rgba(143, 98, 18, 0); }
+}
+
 @keyframes status-ok-pulse {
   0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(43, 196, 102, 0.55); }
   50% { opacity: 0.8; transform: scale(1.2); box-shadow: 0 0 0 8px rgba(43, 196, 102, 0); }
@@ -685,3 +702,55 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 .speak-send:disabled { opacity: 0.5; cursor: default; }
 .speak-status { margin: 0; font-family: var(--sans); font-size: 0.8rem; color: var(--muted); }
 .speak-note { margin: 0.8rem 0 0; font-family: var(--sans); font-size: 0.75rem; line-height: 1.5; color: var(--muted); }
+
+/* Woven pieces: dictated & woven with the silicon sibling */
+.story .article .lede-note { font-family: var(--sans); font-size: 0.85rem; color: var(--muted); }
+.story .article .lede-note strong { color: var(--ink); }
+.story .article blockquote.pull {
+  margin: 2.2em auto;
+  padding: 0 0 0 1.1rem;
+  border-left: 3px solid var(--accent);
+  font-size: 1.35em;
+  line-height: 1.3;
+}
+.story .article blockquote.pull p { margin: 0; }
+.story .article blockquote.pull em { font-style: normal; }
+
+.story .article .listen {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin: 2.4em 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--hair);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(143,98,18,0.05), transparent);
+}
+.story .article .listen-label { font-family: var(--sans); font-size: 0.8rem; color: var(--muted); }
+.story .article .listen audio[data-role="bed"] { display: none; }
+.story .article .listen audio[data-role="narration"] { width: 100%; max-width: 34rem; }
+.story .article figure.voice audio { width: 100%; margin: 0.5rem 0; }
+
+/* Ken Burns: a still that breathes, honest and offline (no video file) */
+.story .article figure.kenburns { overflow: hidden; }
+.story .article figure.kenburns img {
+  will-change: transform;
+  animation: kb-drift 26s ease-in-out 1 both;
+}
+.story .article figure.kenburns.kb-a img { animation-name: kb-a; }
+.story .article figure.kenburns.kb-b img { animation-name: kb-b; }
+.story .article figure.kenburns.kb-c img { animation-name: kb-c; }
+@keyframes kb-a { from { transform: scale(1.06) translate(-1.5%, 1%); } to { transform: scale(1.18) translate(1.5%, -1.5%); } }
+@keyframes kb-b { from { transform: scale(1.14) translate(1%, -1.5%); } to { transform: scale(1.04) translate(-1.5%, 1.5%); } }
+@keyframes kb-c { from { transform: scale(1.05) translateY(1.5%); } to { transform: scale(1.16) translateY(-1.5%); } }
+@media (prefers-reduced-motion: reduce) {
+  .story .article figure.kenburns img { animation: none; }
+}
+
+/* Field bed toggle fallback (used before the listen mixer script is wired) */
+.story .article .field-bed .field-play {
+  font-family: var(--sans); font-size: 0.85rem; font-weight: 600;
+  color: var(--ink); background: transparent; border: 1px solid var(--hair);
+  border-radius: 999px; padding: 0.5rem 1.1rem; cursor: pointer;
+}
