@@ -1256,3 +1256,49 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   color: var(--ink);
 }
 .narrative-voices strong { color: var(--accent); }
+
+/* ---------- Companion app / experience feature styling ---------- */
+.app-copy h3 {
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 1.5rem 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.app-copy ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.app-copy li {
+  margin: 0 0 1.1rem;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.app-copy li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  top: 0.05rem;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-weight: 800;
+}
+
+.app-copy li strong {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.app-copy li em {
+  color: var(--muted);
+  font-style: italic;
+}
