@@ -80,4 +80,9 @@ export PATH="$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$PATH"
 
 ## Build status
 
-**In progress.** Base emulator works; Play Store image downloading. Resume at step 1 above.
+**Complete.** Both AVDs verified working:
+- `pixel7` — API 36, Google APIs (no Play Store) — headless + GUI tested
+- `pixel7-playstore` — API 36, Google Play Store + keyboard pass-through — headless + GUI tested
+
+Emulator is currently shut down. To resume, launch `pixel7-playstore` with:
+`emulator -avd pixel7-playstore -gpu host`

@@ -147,13 +147,21 @@ adb devices
 ## Notes / gotchas
 
 - There is a pre-existing, broken `PixelEmergencyTest` AVD (missing system image).
-  Ignore it; only `pixel7` is usable.
+  Ignore it; only `pixel7` and `pixel7-playstore` are usable.
 - The emulator ran as QEMU under KVM (`/dev/kvm`) on this host.
 - First boot on a 2020 i5 takes ~1–2 minutes to reach the home screen.
 - Disk usage after full install: ~5.6 GB under `~/android-sdk`. Monitor root disk
   before installing additional system images.
+- Keyboard pass-through: set `hw.keyboard = yes` in the AVD `config.ini` (done for
+  `pixel7-playstore`). Type directly from the host keyboard; `Esc`=Back, `F3`=Home,
+  `Enter`/`Space`=select, Arrow keys=DPAD.
 
 ## Build status
 
-**Successful.** Toolchain verified: `adb` 1.0.41, emulator 37.2.12, AVD `pixel7`
-(API 36, Google APIs, x86_64) boots to GUI.
+**Successful.** Toolchain verified: `adb` 1.0.41, emulator 37.2.12.
+Two AVDs ready for further use:
+- `pixel7` — API 36, Google APIs (no Play Store)
+- `pixel7-playstore` — API 36, Google Play Store + keyboard pass-through enabled
+
+Both boot to GUI and respond to `adb devices`. Flagged as working; ready for
+repeated emulator sessions.
