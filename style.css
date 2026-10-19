@@ -1220,3 +1220,39 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   --ok: #2bc46c;
   --danger: #ff7b7b;
 }
+
+/* ---------- Book One narrative section ---------- */
+.book-narrative {
+  border-top: 1px solid var(--hair);
+  padding-top: 2.5rem;
+}
+.narrative-standout {
+  max-width: 46rem;
+  margin: 1.5rem auto 0;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--hair);
+  border-left: 4px solid var(--accent);
+  border-radius: 0.75rem;
+  background: var(--paper);
+}
+.narrative-standout blockquote {
+  margin: 1.25rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  font-style: italic;
+  color: var(--ink);
+}
+.narrative-standout blockquote p {
+  margin: 0 0 1rem;
+  line-height: 1.6;
+}
+.narrative-standout blockquote p:last-child { margin-bottom: 0; }
+.narrative-voices {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.narrative-voices strong { color: var(--accent); }
