@@ -762,3 +762,116 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   color: var(--ink); background: transparent; border: 1px solid var(--hair);
   border-radius: 999px; padding: 0.5rem 1.1rem; cursor: pointer;
 }
+
+/* ---------- Book pre-order page: The Field Remembers ---------- */
+.book-page { max-width: min(100vw - 2rem, 70rem); margin: 0 auto; }
+.book-page .site-header { text-align: center; padding-top: clamp(1.5rem, 4vw, 2.5rem); }
+.book-page .series-badge { font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 0.75rem; display: block; }
+.book-page .tagline em { font-style: normal; color: var(--muted); }
+
+/* Hero: cover + copy side by side */
+.book-hero {
+  display: grid;
+  gap: 2rem;
+  align-items: start;
+  margin: 1.5rem 0 2.5rem;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--border-color, var(--hair));
+  border-radius: 1rem;
+  background: var(--paper);
+}
+@media (min-width: 48rem) {
+  .book-hero { grid-template-columns: 1fr 1fr; }
+}
+.hero-copy .price-block {
+  display: flex; gap: 0.5rem; align-items: baseline; margin: 1rem 0 1.25rem;
+}
+.hero-copy .price { font-size: 2.2rem; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hero-copy .price-note { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); }
+.buy-btn {
+  display: inline-block; margin-top: 0.5rem; padding: 0.9rem 1.5rem;
+  font-family: var(--sans); font-size: 1.05rem; font-weight: 800;
+  color: var(--ink); background: var(--accent); border: none; border-radius: 0.5rem;
+  cursor: pointer; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.buy-btn:hover { background: var(--ink); color: var(--paper); }
+.incentive { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); margin-top: 1rem; }
+
+/* CSS-only cover placeholder (replace with real cover art when ready) */
+.cover-placeholder {
+  aspect-ratio: 2 / 3; width: min(100%, 20rem); margin: 0 auto;
+  background: linear-gradient(150deg, #0a0a0c 0%, #1a1a24 100%);
+  border: 2px solid var(--accent); border-radius: 0.5rem;
+  position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.cover-placeholder .cover-rank {
+  font-family: var(--sans); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); font-weight: 800; margin-bottom: 1.5rem;
+}
+.cover-placeholder .cover-title {
+  font-family: var(--sans); font-size: clamp(1.5rem, 6vw, 2.5rem); font-weight: 900;
+  color: var(--paper); line-height: 1.1; text-align: center; padding: 0 1rem;
+}
+.cover-placeholder .cover-sub {
+  font-family: var(--sans); font-size: 0.9rem; color: rgba(251,250,247,0.6);
+  margin-top: 1rem; letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* Sections */
+.book-section { margin: 3rem 0; }
+.book-section h2 { font-family: var(--sans); font-size: 1.25rem; margin: 0 0 1rem; color: var(--ink); }
+.book-section p { margin: 0 0 1rem; }
+
+/* Feature list */
+.feature-list { list-style: none; padding: 0; margin: 0; }
+.feature-list li { margin: 0 0 1rem; padding-left: 1.6rem; position: relative; }
+.feature-list li::before { content: "\2713"; position: absolute; left: 0; top: 0.05rem; color: var(--accent); font-family: var(--sans); font-weight: 800; }
+
+/* Series preview */
+.series-note { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); margin-bottom: 1.25rem; }
+.series-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+.series-item {
+  display: grid; grid-template-columns: 2.6rem 1fr; gap: 1rem; align-items: start;
+  padding: 1rem 1.25rem; border: 1px solid var(--hair); border-radius: 0.5rem; background: var(--paper);
+}
+.series-item.current { border-color: var(--accent); background: rgba(143,98,18,0.06); }
+.series-num { font-family: var(--sans); font-size: 1.25rem; font-weight: 800; color: var(--accent); }
+.series-item.current .series-num { color: var(--ink); }
+.series-item strong { color: var(--ink); }
+.series-item span { font-family: var(--sans); font-size: 0.85rem; color: var(--muted); display: block; margin-top: 0.15rem; }
+
+/* Author card */
+.author-card { border-top: 1px solid var(--hair); padding-top: 2rem; }
+.author-bio p { margin: 0 0 1rem; }
+
+/* Email capture form */
+.reader-form { border-top: 1px solid var(--hair); padding-top: 2rem; text-align: center; }
+.email-form { display: flex; gap: 0.5rem; max-width: 30rem; margin: 1rem auto 0; }
+.email-form input[type="email"] {
+  flex: 1; padding: 0.75rem 1rem; border: 1px solid var(--hair); border-radius: 0.4rem;
+  background: rgba(0,0,0,0.02); color: var(--ink); font-family: var(--sans); font-size: 0.95rem;
+}
+.email-form button {
+  padding: 0.75rem 1.25rem; font-family: var(--sans); font-size: 0.95rem; font-weight: 700;
+  color: var(--ink); background: var(--accent); border: none; border-radius: 0.4rem; cursor: pointer;
+}
+.email-form button:hover { background: var(--ink); color: var(--paper); }
+.form-note { margin-top: 0.75rem; font-family: var(--sans); font-size: 0.85rem; }
+
+/* Payment methods: reuse .cashapp/.lightning (already defined) */
+.payment-methods { border-top: 1px solid var(--hair); padding-top: 2rem; }
+
+/* FAQ */
+.faq { border-top: 1px solid var(--hair); padding-top: 2rem; }
+.faq-item { border-bottom: 1px solid var(--hair); margin: 0 0 0.5rem; }
+.faq-item summary {
+  font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--ink);
+  cursor: pointer; padding: 0.75rem 0; list-style: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item p { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--muted); }
+
+/* Print-friendly cover swap */
+@media (prefers-color-scheme: dark) {
+  .book-hero { background: var(--paper); }
+}
