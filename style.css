@@ -1493,7 +1493,7 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 
 /* ---------- Avatar popup modal ---------- */
 .avatar-modal {
-  display: none;
+  display: none !important;
   position: fixed;
   z-index: 9999;
   left: 0;
@@ -1507,7 +1507,7 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   box-sizing: border-box;
 }
 .avatar-modal.open {
-  display: flex;
+  display: flex !important;
 }
 .avatar-modal-close {
   position: absolute;
