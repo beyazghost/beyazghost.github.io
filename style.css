@@ -1433,3 +1433,21 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   color: var(--muted);
   margin: 0 0 1.5rem;
 }
+
+/* ---------- TikTok Video of the Moment ---------- */
+.tiktok-moment {
+  margin-top: 0.5rem;
+}
+.tiktok-moment .text {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ff4500;
+}
+.tiktok-moment .text a {
+  color: #ff4500;
+  text-decoration: underline;
+}
+.tiktok-moment .text a:hover {
+  text-decoration: none;
+}
