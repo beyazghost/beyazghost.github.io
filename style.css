@@ -1490,3 +1490,41 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   object-fit: cover;
   border: 2px solid var(--accent);
 }
+
+/* ---------- Avatar popup modal ---------- */
+.avatar-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+.avatar-modal.open {
+  display: flex;
+}
+.avatar-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.avatar-modal-img {
+  max-width: 90vw;
+  max-height: 70vh;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 40px rgba(248, 192, 51, 0.4);
+  border: 3px solid var(--accent);
+}

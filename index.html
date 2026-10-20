@@ -64,8 +64,16 @@
         <span class="dot"></span><span class="text">Check-in status: loading…</span>
       </p>
       <div class="avatar-aloha">
-        <img src="avatar-prooflife.jpg" alt="Avatar" class="avatar-img" loading="lazy">
+        <button class="avatar-popup-btn" aria-label="View larger avatar">
+          <img src="avatar-prooflife.jpg" alt="Avatar" class="avatar-img" loading="lazy">
+        </button>
         <p class="avatar-aloha-text">Aloha</p>
+      </div>
+
+      <!-- Avatar popup modal -->
+      <div class="avatar-modal" id="avatar-modal">
+        <button class="avatar-modal-close" aria-label="Close">&times;</button>
+        <img src="avatar-prooflife.jpg" alt="Avatar" class="avatar-modal-img">
       </div>
     </div>
     <p class="tiktok-moment" aria-live="polite">
@@ -478,6 +486,31 @@
       else out.textContent = d.error || "Something went wrong. Please try again.";
     } catch { out.textContent = "Couldn't send. Please try again, or contact CPJ directly."; }
     btn.disabled = false;
+  });
+})();
+
+(() => {
+  const btn = document.querySelector(".avatar-popup-btn");
+  const modal = document.getElementById("avatar-modal");
+  const close = document.querySelector(".avatar-modal-close");
+  if (!btn || !modal || !close) return;
+
+  btn.addEventListener("click", () => {
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  });
+
+  const closeModal = () => {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+  };
+
+  close.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
   });
 })();
 </script>
