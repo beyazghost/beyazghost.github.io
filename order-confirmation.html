@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmation | Sean Patrick Barrett</title>
+<meta name="description" content="Your pre-order for The Field Remembers has been received.">
+<link rel="canonical" href="https://spbzorro.pages.dev/order-confirmation.html">
+<link rel="stylesheet" href="style.css">
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .wrap { max-width: 100% !important; }
+    .book-section { border: none !important; box-shadow: none !important; background: #fff !important; }
+    .site-header, .site-footer, .site-nav { display: none !important; }
+    hr { display: none !important; }
+    button { display: none !important; }
+  }
+</style>
+</head>
+<body class="story">
+
+<header class="site-header">
+  <div class="wrap">
+    <p class="crumb"><a href="./">&larr; Sean Patrick Barrett</a></p>
+    <p class="label">Order Confirmed</p>
+    <h1>Order Received</h1>
+  </div>
+</header>
+
+<main class="wrap book-page">
+
+  <section class="book-section order-confirmation-section">
+    <div class="confirmation-card">
+      <h2>Thank You for Your Pre-Order</h2>
+      <p class="order-id"><strong>Order ID:</strong> <span id="confirm-order-id">—</span></p>
+      <p class="order-status"><strong>Status:</strong> <span id="confirm-status">Pending</span> &mdash; we&rsquo;ll confirm once payment arrives.</p>
+      
+      <div class="order-details">
+        <h3>Order Summary</h3>
+        <table class="order-table">
+          <tr><th>Name / Company</th><td id="confirm-name">—</td></tr>
+          <tr><th>Email</th><td id="confirm-email">—</td></tr>
+          <tr><th>Address</th><td id="confirm-address">—</td></tr>
+          <tr><th>Country</th><td id="confirm-country">—</td></tr>
+          <tr><th>Quantity</th><td id="confirm-qty">—</td></tr>
+          <tr><th>Price per Book</th><td id="confirm-unit-price">—</td></tr>
+          <tr><th>Shipping Cost</th><td id="confirm-shipping">—</td></tr>
+          <tr class="total-row"><th>Total</th><td id="confirm-total">—</td></tr>
+        </table>
+        <p class="order-note">
+          <strong>Next step:</strong> Send <span id="confirm-total-text">$0.00</span> via Cash App or Lightning to
+          <a href="https://coinos.io/spbzorro" target="_blank" rel="noopener">coinos.io/spbzorro</a>, then message us on
+          <a href="https://signal.me/#eu/B8AFcaPTKSmwpHCIIpBN0CYEx58ozfQWvRJ6f4cBVnRXazmHA81IPpCYckj-EjwT" target="_blank" rel="noopener">Signal</a>
+          with your Order ID to confirm.
+        </p>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="print-btn" onclick="window.print(); return false;">Print Order Confirmation</button>
+        <a class="buy-btn" href="book-pre-order.html">Back to Pre-Order</a>
+      </div>
+
+      <p class="release-reminder">
+        <strong>Release date:</strong> December 12, 2026 &middot; Books ship in order received.
+        Tracking info will be emailed to you when your copy ships.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>&copy; 2026 Sean Patrick Barrett &middot; <a href="./">Home</a></p>
+  </div>
+</footer>
+
+<script>
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id') || '—';
+  const name = params.get('name') || '—';
+  const email = params.get('email') || '—';
+  const address = params.get('address') || '—';
+  const country = params.get('country') || '—';
+  const qty = params.get('qty') || '—';
+  const unitPrice = params.get('unit_price') || '0.00';
+  const shipping = params.get('shipping_cost') || '0.00';
+  const total = params.get('total') || '0.00';
+  const checkoutType = params.get('checkout_type') || 'individual';
+
+  document.getElementById('confirm-order-id').textContent = orderId;
+  document.getElementById('confirm-name').textContent = name;
+  document.getElementById('confirm-email').textContent = email;
+  document.getElementById('confirm-address').textContent = address;
+  document.getElementById('confirm-country').textContent = country;
+  document.getElementById('confirm-qty').textContent = qty;
+  document.getElementById('confirm-unit-price').textContent = '$' + parseFloat(unitPrice || 0).toFixed(2);
+  document.getElementById('confirm-shipping').textContent = '$' + parseFloat(shipping || 0).toFixed(2);
+  document.getElementById('confirm-total').textContent = '$' + parseFloat(total || 0).toFixed(2);
+  document.getElementById('confirm-total-text').textContent = '$' + parseFloat(total || 0).toFixed(2);
+
+  // Print button visibility
+  window.addEventListener('beforeprint', function() {
+    document.body.classList.add('printing');
+  });
+  window.addEventListener('afterprint', function() {
+    document.body.classList.remove('printing');
+  });
+})();
+</script>
+</body>
+</html>

@@ -479,7 +479,7 @@ function updateCheckoutTotal() {
 
 document.getElementById("checkout-country").addEventListener("change", updateCheckoutTotal);
 
-document.getElementById("checkout-form").addEventListener("submit", function (event) {
+  document.getElementById("checkout-form").addEventListener("submit", function (event) {
   event.preventDefault();
   var form = event.target;
   var btn = form.querySelector("button[type=\"submit\"]");
@@ -508,14 +508,6 @@ document.getElementById("checkout-form").addEventListener("submit", function (ev
     total: parseFloat(total),
     checkout_type: checkoutType
   };
-    address: address,
-    email: email,
-    note: note || "",
-    quantity: parseInt(qty, 10),
-    unit_price: unitPrices[checkoutType],
-    total: parseFloat(total),
-    checkout_type: checkoutType
-  };
 
   fetch(API_BASE + "/orders", {
     method: "POST",
@@ -525,17 +517,25 @@ document.getElementById("checkout-form").addEventListener("submit", function (ev
   .then(function (r) { return r.json(); })
   .then(function (data) {
     if (data.ok) {
-      status.style.color = "var(--ok)";
-      status.textContent = "Order reserved (" + data.order_id + "). Total: $" + payload.total.toFixed(2) + ". Pay via Cash App / Lightning at coinos.io/spbzorro, then message on Signal to confirm your order.";
-      form.reset();
-      populateQuantities();
-      updateCheckoutTotal();
+      var params = new URLSearchParams({
+        order_id: data.order_id,
+        name: name,
+        address: address,
+        country: country,
+        email: email,
+        qty: qty,
+        unit_price: unitPrices[checkoutType],
+        shipping_cost: shippingCost,
+        total: payload.total.toFixed(2),
+        checkout_type: checkoutType
+      });
+      window.location.href = "order-confirmation.html?" + params.toString();
     } else {
       status.style.color = "var(--danger)";
       status.textContent = "Order failed: " + (data.error || "unknown error");
+      btn.disabled = false;
+      btn.textContent = "Submit Order &rarr;";
     }
-    btn.disabled = false;
-    btn.textContent = "Submit Order &rarr;";
   })
   .catch(function () {
     status.style.color = "var(--danger)";
