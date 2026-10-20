@@ -1605,3 +1605,12 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   box-shadow: 0 0 40px rgba(248, 192, 51, 0.4);
   border: 3px solid var(--accent);
 }
+
+/* ---------- Book page title styling: capitalize + shadow ---------- */
+.book-page h1,
+.book-page h2,
+.book-page h3,
+.book-page h4 {
+  text-transform: capitalize;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+}
