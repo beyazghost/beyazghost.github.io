@@ -1475,3 +1475,18 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   margin: 0;
   letter-spacing: 0.05em;
 }
+
+/* ---------- Check-in row with avatar side by side ---------- */
+.checkin-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+.avatar-img {
+  width: 144px;
+  height: 144px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
