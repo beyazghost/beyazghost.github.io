@@ -1403,3 +1403,33 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   font-weight: 800;
   color: var(--ink);
 }
+
+/* ---------- Pre-release book order banner (homepage) ---------- */
+.book-preorder-banner {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 1rem;
+  padding: 2rem 1rem;
+  margin: 2rem 0;
+  text-align: center;
+  box-shadow: 0 12px 26px var(--shadow);
+}
+.book-preorder-inner {
+  max-width: 34rem;
+  margin: 0 auto;
+}
+.book-preorder-banner h2 {
+  font-family: var(--sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+.book-preorder-banner p {
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 1.5rem;
+}
