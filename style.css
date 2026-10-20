@@ -1451,3 +1451,27 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 .tiktok-moment .text a:hover {
   text-decoration: none;
 }
+
+/* ---------- Avatar + Aloha (next to check-in status) ---------- */
+.avatar-aloha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+.avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+.avatar-aloha-text {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: 0.05em;
+}
