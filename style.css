@@ -1355,3 +1355,51 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   color: var(--ink);
   font-style: italic;
 }
+
+/* ---------- Checkout shipping row ---------- */
+.checkout-shipping-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hair);
+  border-radius: 0.5rem;
+  background: var(--paper);
+  margin-bottom: 1rem;
+}
+.checkout-shipping-row label {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.checkout-shipping-row span {
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* ---------- Checkout shipping row ---------- */
+.checkout-shipping-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hair);
+  border-radius: 0.5rem;
+  background: var(--paper);
+  margin-bottom: 1rem;
+}
+.checkout-shipping-row label {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.checkout-shipping-row span {
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--ink);
+}

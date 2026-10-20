@@ -260,6 +260,11 @@
         <label for="checkout-address">Address <span class="required">*</span></label>
         <textarea id="checkout-address" name="address" rows="3" placeholder="Street, City, State, ZIP, Country" required></textarea>
 
+        <label for="checkout-country">Country <span class="required">*</span></label>
+        <select id="checkout-country" name="country" required>
+          <option value="">Select country</option>
+        </select>
+
         <label for="checkout-email">Email for confirmation <span class="required">*</span></label>
         <input type="email" id="checkout-email" name="email" placeholder="you@example.com" required>
 
@@ -275,6 +280,11 @@
       <div class="checkout-price-row">
         <label>Price per book</label>
         <span id="checkout-unit-price">$26.00</span>
+      </div>
+
+      <div class="checkout-shipping-row">
+        <label>Shipping</label>
+        <span id="checkout-shipping">$0.00</span>
       </div>
 
       <div class="checkout-total-row">
@@ -375,10 +385,53 @@ function joinReaderList(event) {
 // ---------- Checkout logic ----------
 var checkoutType = "individual";
 var unitPrices = { individual: 26.00, wholesale: 14.44 };
+var shippingRates = [];
+var shippingCost = 0;
 var qtyOptions = {
   individual: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
   wholesale: [10, 50, 100]
 };
+
+function fetchShippingRates() {
+  fetch(API_BASE + "/shipping-rates")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data.ok) {
+        shippingRates = data.rates;
+        var countrySelect = document.getElementById("checkout-country");
+        countrySelect.innerHTML = '<option value="">Select country</option>';
+        shippingRates.forEach(function (rate) {
+          rate.countries.forEach(function (code) {
+            var opt = document.createElement("option");
+            opt.value = code;
+            opt.textContent = rate.region + " (" + code + ")";
+            countrySelect.appendChild(opt);
+          });
+        });
+        // Add Rest of World option
+        var rest = shippingRates.find(function (r) { return r.region === "Rest of World"; });
+        if (rest) {
+          var opt = document.createElement("option");
+          opt.value = "XX";
+          opt.textContent = "Rest of World";
+          countrySelect.appendChild(opt);
+        }
+        updateCheckoutTotal();
+      }
+    })
+    .catch(function () {
+      console.warn("Could not load shipping rates");
+    });
+}
+
+function getShippingRateForCode(code) {
+  if (!code) return 0;
+  for (var i = 0; i < shippingRates.length; i++) {
+    if (shippingRates[i].countries.includes(code)) return shippingRates[i].rate;
+  }
+  var rest = shippingRates.find(function (r) { return r.region === "Rest of World"; });
+  return rest ? rest.rate : 0;
+}
 
 function setCheckoutType(type) {
   checkoutType = type;
@@ -408,16 +461,23 @@ function populateQuantities() {
     select.appendChild(opt);
   });
   if (select.options.length > 0) select.selectedIndex = 0;
+  updateCheckoutTotal();
 }
 
 function updateCheckoutTotal() {
   var select = document.getElementById("checkout-qty");
   var qty = parseInt(select.value, 10) || 1;
   var unit = unitPrices[checkoutType];
-  var total = unit * qty;
+  var countryCode = document.getElementById("checkout-country").value;
+  shippingCost = getShippingRateForCode(countryCode);
+  var subtotal = unit * qty;
+  var total = subtotal + shippingCost;
   document.getElementById("checkout-unit-price").textContent = "$" + unit.toFixed(2);
+  document.getElementById("checkout-shipping").textContent = "$" + shippingCost.toFixed(2);
   document.getElementById("checkout-total").value = "$" + total.toFixed(2);
 }
+
+document.getElementById("checkout-country").addEventListener("change", updateCheckoutTotal);
 
 document.getElementById("checkout-form").addEventListener("submit", function (event) {
   event.preventDefault();
@@ -426,6 +486,7 @@ document.getElementById("checkout-form").addEventListener("submit", function (ev
   var status = document.getElementById("checkout-status");
   var name = document.getElementById("checkout-name").value;
   var address = document.getElementById("checkout-address").value;
+  var country = document.getElementById("checkout-country").value;
   var email = document.getElementById("checkout-email").value;
   var note = document.getElementById("checkout-note").value;
   var qty = document.getElementById("checkout-qty").value;
@@ -437,6 +498,16 @@ document.getElementById("checkout-form").addEventListener("submit", function (ev
 
   var payload = {
     name: name,
+    address: address,
+    country: country,
+    email: email,
+    note: note || "",
+    quantity: parseInt(qty, 10),
+    unit_price: unitPrices[checkoutType],
+    shipping_cost: shippingCost,
+    total: parseFloat(total),
+    checkout_type: checkoutType
+  };
     address: address,
     email: email,
     note: note || "",
@@ -473,6 +544,11 @@ document.getElementById("checkout-form").addEventListener("submit", function (ev
     btn.textContent = "Submit Order &rarr;";
   });
 });
+
+// Initialize shipping rates on page load
+fetchShippingRates();
+populateQuantities();
+updateCheckoutTotal();
 </script>
 </body>
 </html>
