@@ -1710,3 +1710,13 @@ details.speak[open] > summary { margin-bottom: 1rem; }
 .source-note a:hover {
   color: var(--ink);
 }
+
+/* ---------- Birth story timestamps ---------- */
+.timestamp {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
