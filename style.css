@@ -1720,3 +1720,38 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+/* ---------- Birth story video hero ---------- */
+.video-hero {
+  width: 100%;
+  max-width: 720px;
+  margin: 2rem auto;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  border: 2px solid var(--accent);
+  background: #000;
+}
+.video-wrapper {
+  position: relative;
+}
+.birth-video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.video-caption {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  background: var(--paper);
+  border-top: 1px solid var(--hair);
+}
+@media (max-width: 600px) {
+  .video-hero {
+    border-radius: 0;
+    border-width: 0;
+  }
+}
