@@ -1794,3 +1794,17 @@ details.speak[open] > summary { margin-bottom: 1rem; }
     border-width: 0 0 2px 0;
   }
 }
+
+/* ---------- Siren emoji flashing animation ---------- */
+.dancing-emoji {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  animation: siren-flash 0.5s infinite alternate;
+}
+
+@keyframes siren-flash {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
