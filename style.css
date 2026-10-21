@@ -1691,3 +1691,22 @@ details.speak[open] > summary { margin-bottom: 1rem; }
     grid-row: span 1 !important;
   }
 }
+
+/* ---------- Source note ---------- */
+.source-note {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--hair);
+  background: rgba(0,0,0,0.02);
+}
+.source-note a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.source-note a:hover {
+  color: var(--ink);
+}
