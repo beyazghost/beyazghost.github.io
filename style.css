@@ -1755,3 +1755,42 @@ details.speak[open] > summary { margin-bottom: 1rem; }
     border-width: 0;
   }
 }
+
+/* ---------- Quote of the Day ---------- */
+.quote-of-the-day {
+  background: var(--panel);
+  border: 2px solid var(--accent);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 48rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.quote-of-the-day h2 {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+  margin: 0 0 1rem;
+}
+.quote-of-the-day blockquote {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.7;
+  border-left: 4px solid var(--accent);
+  padding-left: 1.25rem;
+}
+.quote-of-the-day blockquote p {
+  margin: 0 0 1rem;
+}
+@media (max-width: 600px) {
+  .quote-of-the-day {
+    border-radius: 0;
+    border-width: 0 0 2px 0;
+  }
+}
