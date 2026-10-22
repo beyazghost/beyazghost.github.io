@@ -3,19 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Confirmation | Sean Patrick Barrett</title>
-<meta name="description" content="Your pre-order for The Field Remembers has been received.">
+<title>Order Confirmation | The Unbowed and Unbroken</title>
+<meta name="description" content="Your pre-order for The Field Remembers has been received by The Unbowed and Unbroken [UNBRKN Collective].">
 <link rel="canonical" href="https://spbzorro.pages.dev/order-confirmation.html">
 <link rel="stylesheet" href="style.css">
 <style>
+  /* Print styles for PDF generation */
   @media print {
     .no-print { display: none !important; }
     body { background: #fff !important; color: #000 !important; }
-    .wrap { max-width: 100% !important; }
+    .wrap { max-width: 100% !important; padding: 0 !important; }
     .book-section { border: none !important; box-shadow: none !important; background: #fff !important; }
     .site-header, .site-footer, .site-nav { display: none !important; }
     hr { display: none !important; }
-    button { display: none !important; }
+    button.no-print, .no-print { display: none !important; }
+    .invoice-header { background: #fbfaf7 !important; }
+    .invoice-table th { background: #f0efe9 !important; color: #161616 !important; }
+    .seller-badge { background: #f0efe9 !important; color: #8f6212 !important; border: 2px solid #8f6212 !important; -webkit-print-color-adjust: exact !important; }
   }
 </style>
 </head>
@@ -33,10 +37,19 @@
 
   <section class="book-section order-confirmation-section">
     <div class="confirmation-card">
+      <!-- Seller Branding -->
+      <div class="invoice-header">
+        <div class="seller-badge">
+          <span class="seller-tag">UNBRKN COLLECTIVE</span>
+          <h3 class="seller-name">The Unbowed and Unbroken</h3>
+          <p class="seller-tagline">Independent consciousness research &mdash; sovereignty, literature, and the field that remembers.</p>
+        </div>
+      </div>
+
       <h2>Thank You for Your Pre-Order</h2>
       <p class="order-id"><strong>Order ID:</strong> <span id="confirm-order-id">—</span></p>
       <p class="order-status"><strong>Status:</strong> <span id="confirm-status">Pending</span> &mdash; we&rsquo;ll confirm once payment arrives.</p>
-      
+
       <div class="order-details">
         <h3>Order Summary</h3>
         <table class="order-table">
@@ -58,7 +71,7 @@
       </div>
 
       <div class="confirm-actions">
-        <button class="print-btn" onclick="window.print(); return false;">Print Order Confirmation</button>
+        <button class="print-btn" onclick="window.print(); return false;">Print Order Confirmation (PDF)</button>
         <a class="buy-btn" href="book-pre-order.html">Back to Pre-Order</a>
       </div>
 
@@ -73,7 +86,7 @@
 
 <footer class="site-footer">
   <div class="wrap">
-    <p>&copy; 2026 Sean Patrick Barrett &middot; <a href="./">Home</a></p>
+    <p>&copy; 2026 The Unbowed and Unbroken [UNBRKN Collective] &middot; <a href="./">Home</a></p>
   </div>
 </footer>
 

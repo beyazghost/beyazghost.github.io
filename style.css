@@ -1808,3 +1808,138 @@ details.speak[open] > summary { margin-bottom: 1rem; }
   50% { transform: scale(1.3); opacity: 0.7; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* ---------- Checkout seller branding ---------- */
+.checkout-seller {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--hair);
+  border-radius: 0.5rem;
+  background: var(--paper);
+  text-align: center;
+}
+.checkout-seller h3 {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+.checkout-seller p {
+  margin: 0.25rem 0;
+}
+.checkout-seller p strong {
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+.seller-tagline {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ---------- Invoice header styling ---------- */
+.invoice-header {
+  background: var(--paper);
+  border: 2px solid var(--accent);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+.seller-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: var(--ink);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.seller-tag {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #3e2723;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.seller-name {
+  font-family: var(--sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 0.5rem;
+}
+.seller-tagline {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ---------- Order table styling ---------- */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+.order-table th {
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--hair);
+}
+.order-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--hair);
+  font-size: 0.95rem;
+}
+.order-table .total-row {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+.order-table .total-row td {
+  color: var(--accent);
+  border-top: 2px solid var(--hair);
+  padding-top: 1rem;
+}
+
+/* ---------- Confirmation card styling ---------- */
+.confirmation-card {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.confirm-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.confirm-actions .btn-primary {
+  flex: 1;
+}
+
+/* ---------- Print enhancements ---------- */
+@media print {
+  .confirmation-card {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+  }
+  .invoice-header {
+    page-break-inside: avoid;
+  }
+  .order-table {
+    page-break-inside: avoid;
+  }
+  .confirm-actions {
+    page-break-inside: avoid;
+  }
+}
