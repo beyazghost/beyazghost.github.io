@@ -72,6 +72,7 @@
 
       <div class="confirm-actions">
         <button class="print-btn" onclick="window.print(); return false;">Print Order Confirmation (PDF)</button>
+        <button class="email-btn" onclick="sendOrderEmail(); return false;">Email Order Confirmation</button>
         <a class="buy-btn" href="book-pre-order.html">Back to Pre-Order</a>
       </div>
 
@@ -122,6 +123,39 @@
   window.addEventListener('afterprint', function() {
     document.body.classList.remove('printing');
   });
+
+  // Email order confirmation
+  function sendOrderEmail() {
+    const name = document.getElementById('confirm-name').textContent;
+    const email = document.getElementById('confirm-email').textContent;
+    const address = document.getElementById('confirm-address').textContent;
+    const country = document.getElementById('confirm-country').textContent;
+    const qty = document.getElementById('confirm-qty').textContent;
+    const unitPrice = document.getElementById('confirm-unit-price').textContent;
+    const shipping = document.getElementById('confirm-shipping').textContent;
+    const total = document.getElementById('confirm-total').textContent;
+    const orderId = document.getElementById('confirm-order-id').textContent;
+
+    const subject = encodeURIComponent('Order Confirmation - ' + orderId + ' - The Unbowed and Unbroken');
+    const body = encodeURIComponent(
+      'Order Confirmation\n' +
+      '====================\n' +
+      'Order ID: ' + orderId + '\n' +
+      'Name: ' + name + '\n' +
+      'Email: ' + email + '\n' +
+      'Address: ' + address + '\n' +
+      'Country: ' + country + '\n' +
+      'Quantity: ' + qty + '\n' +
+      'Price per Book: ' + unitPrice + '\n' +
+      'Shipping Cost: ' + shipping + '\n' +
+      'Total: ' + total + '\n' +
+      '\n' +
+      'Next step: Please send payment of ' + total + ' via Cash App or Lightning to coinos.io/spbzorro.\n' +
+      'Then message us on Signal to confirm your pre-order.\n'
+    );
+
+    window.location.href = 'mailto:spbzorro@tuta.io?subject=' + subject + '&body=' + body;
+  }
 })();
 </script>
 </body>

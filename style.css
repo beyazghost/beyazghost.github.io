@@ -1943,3 +1943,29 @@ details.speak[open] > summary { margin-bottom: 1rem; }
     page-break-inside: avoid;
   }
 }
+
+/* ---------- Email button styling ---------- */
+.email-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--panel);
+  border: 2px solid var(--hair);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-top: 0.5rem;
+}
+.email-btn:hover {
+  background: var(--accent);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+@media (max-width: 30rem) {
+  .confirm-actions {
+    flex-direction: column;
+  }
+}
