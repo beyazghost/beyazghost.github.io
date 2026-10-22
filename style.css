@@ -1969,3 +1969,24 @@ details.speak[open] > summary { margin-bottom: 1rem; }
     flex-direction: column;
   }
 }
+
+/* ---------- Instagram Reel embed ---------- */
+.instagram-embed {
+  margin: 2rem auto;
+  max-width: 560px;
+  text-align: center;
+}
+.instagram-embed .video-label {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  display: block;
+}
+.instagram-embed blockquote {
+  margin: 0 auto;
+  max-width: 540px;
+}
